@@ -1,12 +1,18 @@
 -- ================================================================
 -- SHOPFLOW SEED — TechHub Demo Store + 20 Productos Electrónica
 -- ================================================================
+--
+-- ANTES DE EJECUTAR:
+--   1. Ve a Authentication → Users en tu proyecto Supabase
+--   2. Crea (o copia el UUID de) el usuario que será dueño de la tienda demo
+--   3. Reemplaza el UUID de v_owner_id con ese UUID
+--
+-- El v_store_id puede dejarse como está o cambiarse a cualquier UUID válido.
+-- ================================================================
 
--- Demo user (reemplaza el UUID con el de auth.users en tu proyecto)
--- Este seed asume que existe un usuario con este UUID ya creado
 do $$
 declare
-  v_owner_id  uuid := '00000000-0000-0000-0000-000000000001';
+  v_owner_id  uuid := '00000000-0000-0000-0000-000000000001'; -- ← CAMBIA ESTE UUID
   v_store_id  uuid := '00000000-0000-0000-0000-000000000010';
   v_cat_smartphones uuid;
   v_cat_laptops     uuid;

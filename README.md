@@ -114,7 +114,24 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 SUPERADMIN_EMAIL=admin@shopflow.app
 ```
 
-### 2. Supabase local
+### 2. Supabase — ejecutar SQL
+
+Tienes dos opciones:
+
+#### Opción A — SQL Editor en supabase.com (recomendado para empezar rápido)
+
+1. Abre tu proyecto en [supabase.com](https://supabase.com) → **SQL Editor**
+2. Ejecuta primero el schema:
+   - Abre `supabase/migrations/001_schema.sql`
+   - Pega el contenido completo → **Run**
+3. Ejecuta el seed (tienda demo TechHub + 20 productos):
+   - Abre `supabase/seed.sql`
+   - **Antes de pegar**: crea un usuario en **Authentication → Users → Invite user** con el email que quieras
+   - Copia el `UUID` del usuario recién creado
+   - Reemplaza `00000000-0000-0000-0000-000000000001` por ese UUID en la primera línea del seed
+   - Pega el contenido completo → **Run**
+
+#### Opción B — Supabase CLI (desarrollo local)
 
 ```bash
 npx supabase start
