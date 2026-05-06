@@ -227,9 +227,11 @@ create table coupons (
   uses_count    int default 0,
   expires_at    timestamptz,
   is_active     boolean default true,
-  created_at    timestamptz default now(),
-  unique(store_id, upper(code))
+  created_at    timestamptz default now()
 );
+
+-- Unique index case-insensitive: un código por tienda sin importar mayúsculas
+create unique index coupons_store_code_idx on coupons(store_id, upper(code));
 
 -- ================================================================
 -- ROW LEVEL SECURITY
