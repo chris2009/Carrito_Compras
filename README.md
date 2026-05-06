@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ShopFlow
 
-## Getting Started
+SaaS multi-tenant de e-commerce. Cualquier persona crea su tienda en minutos.
 
-First, run the development server:
+## Para vendedores
+1. Regístrate en shopflow.app
+2. Nombra tu tienda y obtén {tu-slug}.shopflow.app
+3. Carga productos (manual o importa desde Excel/CSV)
+4. Comparte y vende con cobro vía Stripe
+
+## Stack
+Next.js 14 · Supabase · Stripe · Vercel · TypeScript · Tailwind
+
+## Desarrollo local
 
 ```bash
+cp .env.example .env.local
+# Completar variables en .env.local
+
+npm install
+npx supabase start
+npx supabase db push
+npx supabase db seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Estructura
+```
+├── app/
+│   ├── (marketing)/      # Landing, login, registro, onboarding
+│   ├── (store)/          # Storefront público del tenant
+│   ├── (dashboard)/      # Panel del vendedor
+│   ├── (superadmin)/     # Panel maestro ShopFlow
+│   └── api/              # Route handlers
+├── components/
+│   ├── store/            # Componentes storefront
+│   ├── dashboard/        # Componentes panel vendedor
+│   └── ui/               # Shadcn base components
+├── lib/
+│   ├── supabase/         # Clients server/client + helpers
+│   ├── stripe/           # Stripe helpers
+│   ├── excel/            # Parser Excel/CSV + generador plantilla
+│   └── utils/
+├── supabase/
+│   ├── migrations/       # SQL migrations versionadas
+│   └── seed.sql
+├── CLAUDE.md
+├── memory.md
+└── README.md
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Multi-tenant
+Cada tienda tiene slug único. En prod: `{slug}.shopflow.app`.
+En dev: `localhost:3000?store={slug}`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Import masivo de productos
+- Sube Excel (.xlsx) o CSV desde Dashboard → Productos → Importar
+- Plantilla descargable con columnas predefinidas
+- Validación fila por fila con reporte de errores
+- Preview antes de confirmar la importación
