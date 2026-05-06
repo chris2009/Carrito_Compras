@@ -12,7 +12,7 @@
 
 do $$
 declare
-  v_owner_id  uuid := '00000000-0000-0000-0000-000000000001'; -- ← CAMBIA ESTE UUID
+  v_owner_id  uuid := '9e8b17e3-64c6-46ab-9989-dbbfe752e161'; -- ← CAMBIA ESTE UUID
   v_store_id  uuid := '00000000-0000-0000-0000-000000000010';
   v_cat_smartphones uuid;
   v_cat_laptops     uuid;

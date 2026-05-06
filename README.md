@@ -241,6 +241,12 @@ Tablas principales (todas con RLS habilitado):
 
 ---
 
+## Repositorio
+
+```
+https://github.com/chris2009/Carrito_Compras
+```
+
 ## Deploy en Vercel
 
 1. Conectar repositorio en [vercel.com](https://vercel.com)

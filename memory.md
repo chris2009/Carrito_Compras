@@ -1,9 +1,9 @@
 # ShopFlow — Project Memory
 
 ## Estado actual
-- Fase activa: 10 — Deploy Vercel (pendiente configuración env vars en Vercel)
+- Fase activa: 10 — Deploy Vercel (pendiente)
 - Última actualización: 2026-05-06
-- Último commit: docs: actualizar README, CLAUDE.md y memory
+- Último commit: chore: seed ejecutado en Supabase con UUID real, repo conectado a GitHub
 
 ## Fases completadas
 - [x] FASE 0: Archivos contexto + scaffold
@@ -41,6 +41,7 @@
 - Slug: `techhub` — URL local: `http://localhost:3000?store=techhub`
 - 20 productos de electrónica en 8 categorías
 - Moneda: USD | País: PE
+- **Seed ejecutado en Supabase** ✓ (owner_id: `9e8b17e3-64c6-46ab-9989-dbbfe752e161`)
 
 ## Variables de entorno requeridas
 ```
@@ -63,9 +64,9 @@ SUPERADMIN_EMAIL=admin@shopflow.app
 - **Planes/billing**: la columna `plan_id` existe pero el upgrade a Pro no está implementado (Stripe Billing pendiente)
 
 ## Próximos pasos — FASE 10
-1. Crear proyecto en Vercel y conectar repositorio GitHub
-2. Agregar env vars en Vercel dashboard
-3. Configurar wildcard domain `*.shopflow.app` en Vercel → apuntar DNS
-4. Aplicar migration en Supabase producción: `supabase db push --linked`
+1. ✓ Repositorio conectado a GitHub: https://github.com/chris2009/Carrito_Compras
+2. Crear proyecto en Vercel e importar ese repositorio
+3. Agregar env vars en Vercel dashboard (ver .env.example)
+4. Configurar wildcard domain `*.shopflow.app` en Vercel → apuntar DNS
 5. Configurar Stripe webhook: `https://shopflow.app/api/webhooks/stripe` — evento: `checkout.session.completed`
 6. Test end-to-end con tarjeta `4242 4242 4242 4242`

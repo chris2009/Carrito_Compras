@@ -45,4 +45,4 @@
 - [x] FASE 7: Dashboard del vendedor
 - [x] FASE 8: Super-admin panel
 - [x] FASE 9: SEO + Performance + PWA
-- [ ] FASE 10: Deploy Vercel
+- [ ] FASE 10: Deploy Vercel  ← EN PROGRESO (repo en GitHub, pendiente Vercel + DNS)
