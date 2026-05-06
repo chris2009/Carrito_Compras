@@ -7,10 +7,13 @@ export async function middleware(request: NextRequest) {
   const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN || 'shopflow.app'
 
   let storeSlug: string | null = null
-  if (process.env.NODE_ENV === 'production') {
-    const isSubdomain = hostname.endsWith(`.${appDomain}`) && !hostname.startsWith('www.')
-    if (isSubdomain) storeSlug = hostname.replace(`.${appDomain}`, '')
+
+  // Subdominio en producción: techhub.shopflow.app
+  const isSubdomain = hostname.endsWith(`.${appDomain}`) && !hostname.startsWith('www.')
+  if (isSubdomain) {
+    storeSlug = hostname.replace(`.${appDomain}`, '')
   } else {
+    // Fallback: ?store=techhub — funciona en local y en Vercel sin dominio propio
     storeSlug =
       request.nextUrl.searchParams.get('store') ||
       request.headers.get('x-store-slug') ||
