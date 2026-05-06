@@ -3,7 +3,7 @@
 ## Estado actual
 - Fase activa: 10 — Deploy Vercel (pendiente)
 - Última actualización: 2026-05-06
-- Último commit: chore: seed ejecutado en Supabase con UUID real, repo conectado a GitHub
+- Último commit: docs: guía completa de variables de entorno con tabla de origen
 
 ## Fases completadas
 - [x] FASE 0: Archivos contexto + scaffold

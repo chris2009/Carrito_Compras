@@ -102,17 +102,43 @@ cp .env.example .env.local
 Completar en `.env.local`:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key de supabase start>
-SUPABASE_SERVICE_ROLE_KEY=<service role key de supabase start>
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
+# ─── SUPABASE ─────────────────────────────────────────────────────
+# supabase.com → tu proyecto → Settings → API
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+
+# ─── STRIPE ───────────────────────────────────────────────────────
+# dashboard.stripe.com → Developers → API keys
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_SECRET_KEY=sk_test_...
+# dashboard.stripe.com → Developers → Webhooks → signing secret
+STRIPE_WEBHOOK_SECRET=whsec_...
+
+# ─── RESEND ───────────────────────────────────────────────────────
+# resend.com → API Keys → Create API Key
 RESEND_API_KEY=re_...
+
+# ─── APP ──────────────────────────────────────────────────────────
 NEXT_PUBLIC_APP_DOMAIN=localhost:3000
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Email con acceso a /superadmin
 SUPERADMIN_EMAIL=admin@shopflow.app
 ```
+
+| Variable | Dónde conseguirla |
+|----------|-------------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | supabase.com → proyecto → **Settings → API → Project URL** |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | supabase.com → proyecto → **Settings → API → anon public** |
+| `SUPABASE_SERVICE_ROLE_KEY` | supabase.com → proyecto → **Settings → API → service_role** ⚠️ nunca exponerla al cliente |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | dashboard.stripe.com → **Developers → API keys → Publishable key** |
+| `STRIPE_SECRET_KEY` | dashboard.stripe.com → **Developers → API keys → Secret key** |
+| `STRIPE_WEBHOOK_SECRET` | dashboard.stripe.com → **Developers → Webhooks → Add endpoint → signing secret** |
+| `RESEND_API_KEY` | resend.com → **API Keys → Create API Key** |
+| `NEXT_PUBLIC_APP_DOMAIN` | Tu dominio en producción (`shopflow.app`) o `localhost:3000` en local |
+| `NEXT_PUBLIC_APP_URL` | URL completa con protocolo (`https://shopflow.app` en prod) |
+| `SUPERADMIN_EMAIL` | Email del usuario que accede a `/superadmin` |
 
 ### 2. Supabase — ejecutar SQL
 
