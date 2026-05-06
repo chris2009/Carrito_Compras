@@ -35,14 +35,14 @@
 7. Después de cada fase: type-check → build → update memory.md → commit
 
 ## Checklist de fases
-- [ ] FASE 0: Archivos contexto + scaffold
-- [ ] FASE 1: Schema Supabase + RLS + seed
-- [ ] FASE 2: Auth + Onboarding de nuevas tiendas
-- [ ] FASE 3: Middleware multi-tenant
-- [ ] FASE 4: Storefront público (catálogo, producto, carrito)
-- [ ] FASE 5: Import Excel/CSV masivo de productos
-- [ ] FASE 6: Checkout Stripe
-- [ ] FASE 7: Dashboard del vendedor
-- [ ] FASE 8: Super-admin panel
-- [ ] FASE 9: SEO + Performance + PWA
+- [x] FASE 0: Archivos contexto + scaffold
+- [x] FASE 1: Schema Supabase + RLS + seed
+- [x] FASE 2: Auth + Onboarding de nuevas tiendas
+- [x] FASE 3: Middleware multi-tenant
+- [x] FASE 4: Storefront público (catálogo, producto, carrito)
+- [x] FASE 5: Import Excel/CSV masivo de productos
+- [x] FASE 6: Checkout Stripe
+- [x] FASE 7: Dashboard del vendedor
+- [x] FASE 8: Super-admin panel
+- [x] FASE 9: SEO + Performance + PWA
 - [ ] FASE 10: Deploy Vercel
