@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, Save } from 'lucide-react'
+import { Loader2, Save, Upload, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -25,6 +25,8 @@ type Props = {
 export function ProductForm({ store, categories, product }: Props) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const imageInputRef = useRef<HTMLInputElement>(null)
   const [form, setForm] = useState({
     name: product?.name || '',
     slug: product?.slug || '',
@@ -45,6 +47,33 @@ export function ProductForm({ store, categories, product }: Props) {
 
   function updateForm(key: string, value: string | boolean) {
     setForm((prev) => ({ ...prev, [key]: value }))
+  }
+
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    setUploadingImage(true)
+    try {
+      const supabase = createClient()
+      const urls: string[] = []
+      for (const file of Array.from(files)) {
+        const ext = file.name.split('.').pop()
+        const path = `${store.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+        const { error } = await supabase.storage.from('products').upload(path, file, { upsert: false })
+        if (error) throw error
+        const { data: { publicUrl } } = supabase.storage.from('products').getPublicUrl(path)
+        urls.push(publicUrl)
+      }
+      const current = form.images_text.trim()
+      updateForm('images_text', current ? `${current}\n${urls.join('\n')}` : urls.join('\n'))
+      toast.success(`${urls.length} imagen${urls.length > 1 ? 'es' : ''} subida${urls.length > 1 ? 's' : ''}`)
+    } catch (err) {
+      toast.error('Error al subir imagen. Verifica el bucket "products" en Supabase Storage.')
+      console.error(err)
+    } finally {
+      setUploadingImage(false)
+      if (imageInputRef.current) imageInputRef.current.value = ''
+    }
   }
 
   async function handleSave() {
@@ -180,16 +209,69 @@ export function ProductForm({ store, categories, product }: Props) {
 
       <TabsContent value="imagenes" className="mt-4">
         <Card>
-          <CardHeader><CardTitle className="text-base">URLs de imágenes</CardTitle></CardHeader>
-          <CardContent>
-            <Label className="mb-2 block">Una URL por línea (la primera será la imagen principal)</Label>
-            <Textarea
-              value={form.images_text}
-              onChange={(e) => updateForm('images_text', e.target.value)}
-              rows={6}
-              placeholder="https://ejemplo.com/imagen1.jpg&#10;https://ejemplo.com/imagen2.jpg"
-            />
-            <p className="mt-1 text-xs text-gray-400">Puedes pegar URLs de imágenes de Unsplash, tu Storage de Supabase u otro hosting.</p>
+          <CardHeader><CardTitle className="text-base">Imágenes del producto</CardTitle></CardHeader>
+          <CardContent className="space-y-3">
+            {/* Upload directo */}
+            <div className="flex items-center gap-3 rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4">
+              <Upload className="h-5 w-5 text-gray-400 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-700">Subir imágenes desde tu computadora</p>
+                <p className="text-xs text-gray-400">JPG, PNG, WebP — puedes seleccionar varias a la vez</p>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                disabled={uploadingImage}
+                onClick={() => imageInputRef.current?.click()}
+              >
+                {uploadingImage ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Seleccionar'}
+              </Button>
+              <input
+                ref={imageInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={handleImageUpload}
+              />
+            </div>
+
+            {/* URLs manual */}
+            <div>
+              <Label className="mb-1 block text-sm text-gray-600">O pega URLs directamente (una por línea)</Label>
+              <Textarea
+                value={form.images_text}
+                onChange={(e) => updateForm('images_text', e.target.value)}
+                rows={5}
+                placeholder="https://ejemplo.com/imagen1.jpg&#10;https://ejemplo.com/imagen2.jpg"
+              />
+            </div>
+
+            {/* Preview */}
+            {form.images_text.trim() && (
+              <div className="flex flex-wrap gap-2">
+                {form.images_text.split('\n').filter(u => u.trim().startsWith('http')).map((url, i) => (
+                  <div key={i} className="relative group">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={url.trim()} alt={`imagen ${i + 1}`} className="h-20 w-20 rounded-lg object-cover border" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
+                    {i === 0 && <span className="absolute bottom-1 left-1 rounded bg-indigo-600 px-1 text-[10px] text-white">Principal</span>}
+                    <button
+                      type="button"
+                      className="absolute -right-1 -top-1 hidden group-hover:flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white"
+                      onClick={() => {
+                        const lines = form.images_text.split('\n').filter((_, idx) => idx !== i)
+                        updateForm('images_text', lines.join('\n'))
+                      }}
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <p className="text-xs text-gray-400">La primera imagen será la principal. Requiere bucket <code className="bg-gray-100 px-1 rounded">products</code> público en Supabase Storage.</p>
           </CardContent>
         </Card>
       </TabsContent>

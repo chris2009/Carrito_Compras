@@ -53,7 +53,7 @@ export default function ImportarPage() {
     const { generateTemplate, generateCsvTemplate } = await import('@/lib/excel/template')
     if (type === 'xlsx') {
       const data = generateTemplate()
-      const blob = new Blob([data.buffer as ArrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+      const blob = new Blob([new Uint8Array(data.buffer as ArrayBuffer, data.byteOffset, data.byteLength)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
