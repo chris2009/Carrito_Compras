@@ -69,7 +69,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
 
   return (
     <div
-      className="min-h-screen pb-8"
+      className="min-h-screen pb-8 relative"
       style={{
         '--color-primary': store.theme.primary,
         '--color-secondary': store.theme.secondary,
