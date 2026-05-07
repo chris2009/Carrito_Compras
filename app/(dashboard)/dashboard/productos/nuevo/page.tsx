@@ -13,7 +13,7 @@ export default async function NuevoProductoPage() {
   const { data: categories } = await supabase.from('categories').select('id, name').eq('store_id', store.id).eq('is_active', true)
 
   return (
-    <div className="max-w-3xl space-y-6">
+    <div className="max-w-3xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold text-gray-900">Nuevo producto</h1>
       <ProductForm store={store} categories={categories || []} />
     </div>

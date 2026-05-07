@@ -128,7 +128,7 @@ export function ProductForm({ store, categories, product }: Props) {
 
   return (
     <Tabs defaultValue="general">
-      <TabsList>
+      <TabsList className="w-full grid grid-cols-3">
         <TabsTrigger value="general">General</TabsTrigger>
         <TabsTrigger value="imagenes">Imágenes</TabsTrigger>
         <TabsTrigger value="inventario">Inventario</TabsTrigger>
@@ -302,9 +302,11 @@ export function ProductForm({ store, categories, product }: Props) {
         </Card>
       </TabsContent>
 
-      <Button onClick={handleSave} disabled={loading} className="mt-4 bg-indigo-600 hover:bg-indigo-700">
-        {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Guardando...</> : <><Save className="mr-2 h-4 w-4" />{product ? 'Guardar cambios' : 'Crear producto'}</>}
-      </Button>
+      <div className="flex justify-center mt-6">
+        <Button onClick={handleSave} disabled={loading} className="px-10 bg-indigo-600 hover:bg-indigo-700">
+          {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Guardando...</> : <><Save className="mr-2 h-4 w-4" />{product ? 'Guardar cambios' : 'Crear producto'}</>}
+        </Button>
+      </div>
     </Tabs>
   )
 }
