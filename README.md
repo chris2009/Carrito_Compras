@@ -178,29 +178,82 @@ Abre [http://localhost:3000?store=techhub](http://localhost:3000?store=techhub)
 
 ---
 
-## Usuario de prueba (seed)
+## Cómo acceder — Paso a paso
 
-El `seed.sql` crea la tienda **TechHub** con 20 productos de electrónica.
+> **IMPORTANTE**: hay tres roles distintos. Leer antes de intentar entrar.
 
-Para probar el dashboard, primero crea un usuario en Supabase Auth y luego asígnale el `owner_id` del seed, **o** simplemente regístrate en `/registro` y completa el onboarding para crear tu propia tienda.
+---
 
-### Tienda demo — TechHub
+### Rol 1 — Super-Admin (dueño de la plataforma)
+
+Accede al panel maestro donde ves TODAS las tiendas de todos los tenants.
+
+**Requisitos:**
+- El email del usuario en Supabase Auth debe coincidir exactamente con `SUPERADMIN_EMAIL` en `.env.local`
+- Actualmente configurado como: `admin@techhub.com`
+
+**Pasos:**
+1. Ir a `http://localhost:3000/login`
+2. Ingresar con `admin@techhub.com` + tu contraseña
+3. Una vez dentro, navegar manualmente a `http://localhost:3000/superadmin`
+
+> Si ves que te redirige a `/` en lugar de entrar, verifica que `SUPERADMIN_EMAIL=admin@techhub.com` esté en tu `.env.local` y reinicia `npm run dev`.
+
+---
+
+### Rol 2 — Vendedor (dueño de una tienda)
+
+Accede al dashboard de su tienda: productos, pedidos, clientes, cupones, configuración.
+
+**Pasos:**
+1. Crear cuenta en `http://localhost:3000/registro`
+2. Completar el onboarding de 4 pasos (nombre tienda, colores, contacto)
+3. Queda en `http://localhost:3000/dashboard`
+
+**Para entrar en sesiones futuras:**
+1. Ir a `http://localhost:3000/login`
+2. Ingresar con el email y contraseña del registro
+3. Redirige automáticamente a `/dashboard`
+
+> **Email no confirmado**: Supabase envía un email de confirmación al registrarse. Si no puedes entrar, revisa tu bandeja de entrada y confirma el email primero. Para saltarte esto en desarrollo, ve a Supabase → Authentication → Settings → desactiva "Enable email confirmations".
+
+---
+
+### Rol 3 — Comprador (cliente de una tienda)
+
+No necesita cuenta. Solo navega el storefront de la tienda.
+
+**En desarrollo local:**
+- `http://localhost:3000?store=techhub` → storefront de TechHub
+- `http://localhost:3000?store={slug}` → cualquier otra tienda por su slug
+
+---
+
+## Usuarios en Supabase (credenciales actuales)
+
+| Email | Rol | Acceso |
+|-------|-----|--------|
+| `admin@techhub.com` | Super-Admin + Vendedor TechHub | `/superadmin` y `/dashboard` |
+| `sherlock2009@gmail.com` | Vendedor | `/dashboard` de su tienda |
+
+> Si `sherlock2009@gmail.com` no puede entrar: ir a Supabase → Authentication → Users → buscar el usuario → clic en los 3 puntos → **Send magic link** o **Reset password** para resetear la contraseña.
+
+---
+
+## Tienda demo — TechHub
+
 | Campo | Valor |
 |-------|-------|
 | URL local | `http://localhost:3000?store=techhub` |
 | Slug | `techhub` |
+| Dashboard | `http://localhost:3000/dashboard` (logueado como `admin@techhub.com`) |
 | Email contacto | `hola@techhub.pe` |
-| WhatsApp | `+51 999 123 456` |
-| Moneda | USD |
 | Productos | 20 (smartphones, laptops, audio, tablets, gaming, accesorios, cámaras, smarthome) |
 
-### Super-Admin
-| Campo | Valor |
-|-------|-------|
-| URL | `/superadmin` |
-| Email requerido | El valor de `SUPERADMIN_EMAIL` en `.env.local` |
+---
 
-### Tarjeta Stripe (modo test)
+## Tarjeta Stripe (modo test)
+
 | Campo | Valor |
 |-------|-------|
 | Número | `4242 4242 4242 4242` |
