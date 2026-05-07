@@ -3,6 +3,7 @@ import { getCurrentStore } from '@/lib/supabase/store-context'
 import { createClient } from '@/lib/supabase/server'
 import { StoreHeader } from '@/components/store/StoreHeader'
 import { StorePage } from '@/components/store/StorePage'
+import { StickyFooter } from '@/components/StickyFooter'
 import LandingPage from '@/components/marketing/LandingPage'
 
 export const revalidate = 60
@@ -43,13 +44,13 @@ export default async function RootPage() {
       <main>
         <StorePage store={store} featured={featured || []} categories={categories || []} newest={newest || []} />
       </main>
-      <footer className="border-t bg-gray-50 px-4 py-8 mt-16">
-        <div className="mx-auto max-w-6xl text-center text-sm text-gray-500">
+      <footer className="border-t bg-gray-50 dark:border-gray-700 dark:bg-gray-900 px-4 py-8 mt-16 mb-8">
+        <div className="mx-auto max-w-6xl text-center text-sm text-gray-500 dark:text-gray-400">
           <p>{store.name} · Powered by ShopFlow</p>
           {store.contact.whatsapp && (
             <a
               href={`https://wa.me/${store.contact.whatsapp.replace(/\D/g, '')}`}
-              className="mt-1 block text-green-600 hover:underline"
+              className="mt-1 block text-green-600 dark:text-green-400 hover:underline"
               target="_blank" rel="noopener noreferrer"
             >
               Contactar por WhatsApp
@@ -57,6 +58,7 @@ export default async function RootPage() {
           )}
         </div>
       </footer>
+      <StickyFooter />
     </div>
   )
 }
