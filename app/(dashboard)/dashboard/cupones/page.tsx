@@ -9,7 +9,7 @@ export default async function CuponesPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: store } = await supabase.from('stores').select('id').eq('owner_id', user.id).single()
+  const { data: store } = await supabase.from('stores').select('id').eq('owner_id', user.id).limit(1).single()
   if (!store) redirect('/onboarding')
 
   const { data: coupons } = await supabase

@@ -18,7 +18,7 @@ export default async function ProductsAdminPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: store } = await supabase.from('stores').select('id, currency, theme').eq('owner_id', user.id).single()
+  const { data: store } = await supabase.from('stores').select('id, currency, theme').eq('owner_id', user.id).limit(1).single()
   if (!store) redirect('/onboarding')
 
   const params = await searchParams

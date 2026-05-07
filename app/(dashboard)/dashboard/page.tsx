@@ -17,6 +17,7 @@ export default async function DashboardPage() {
     .from('stores')
     .select('*')
     .eq('owner_id', user.id)
+    .limit(1)
     .single()
 
   if (!store) redirect('/onboarding')

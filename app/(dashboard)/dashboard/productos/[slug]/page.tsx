@@ -9,7 +9,7 @@ export default async function EditarProductoPage({ params }: { params: Promise<{
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: store } = await supabase.from('stores').select('id, currency').eq('owner_id', user.id).single()
+  const { data: store } = await supabase.from('stores').select('id, currency').eq('owner_id', user.id).limit(1).single()
   if (!store) redirect('/onboarding')
 
   const { data: product } = await supabase.from('products').select('*').eq('id', id).eq('store_id', store.id).single()

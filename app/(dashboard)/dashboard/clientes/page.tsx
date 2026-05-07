@@ -7,7 +7,7 @@ export default async function ClientesPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: store } = await supabase.from('stores').select('id, currency').eq('owner_id', user.id).single()
+  const { data: store } = await supabase.from('stores').select('id, currency').eq('owner_id', user.id).limit(1).single()
   if (!store) redirect('/onboarding')
 
   const { data: customers } = await supabase

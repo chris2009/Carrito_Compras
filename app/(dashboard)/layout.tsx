@@ -12,6 +12,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     .from('stores')
     .select('*')
     .eq('owner_id', user.id)
+    .limit(1)
     .single()
 
   if (!store) redirect('/onboarding')
