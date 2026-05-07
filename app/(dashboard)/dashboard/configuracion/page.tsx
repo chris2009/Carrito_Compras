@@ -11,7 +11,7 @@ export default async function ConfiguracionPage() {
   if (!store) redirect('/onboarding')
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-6 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold text-gray-900">Configuración de tienda</h1>
       <StoreConfigForm store={store} />
     </div>
