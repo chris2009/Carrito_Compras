@@ -52,7 +52,7 @@ export async function generateViewport(): Promise<Viewport> {
 
 export default async function StoreLayout({ children }: { children: React.ReactNode }) {
   const headersList = await headers()
-  const slug = headersList.get('x-store-slug') || 'techhub'
+  const slug = headersList.get('x-store-slug') || ''
   const store = await getCurrentStore(slug)
 
   if (!store) {

@@ -54,7 +54,7 @@ export function CartDrawer({ store }: { store: Store }) {
         <div className="flex flex-col items-center justify-center gap-3 py-20 text-center">
           <ShoppingCart className="h-12 w-12 text-gray-300" />
           <p className="text-gray-500">Tu carrito está vacío</p>
-          <Link href="/productos">
+          <Link href={`/productos?store=${store.slug}`}>
             <Button size="sm" style={{ background: store.theme.primary }} className="text-white">
               Ver productos
             </Button>
@@ -88,7 +88,7 @@ export function CartDrawer({ store }: { store: Store }) {
               </div>
               <div className="flex flex-1 flex-col justify-between">
                 <div className="flex items-start justify-between gap-1">
-                  <Link href={`/productos/${item.slug}`} className="line-clamp-2 text-sm font-medium hover:underline">
+                  <Link href={`/productos/${item.slug}?store=${store.slug}`} className="line-clamp-2 text-sm font-medium hover:underline">
                     {item.name}
                   </Link>
                   <button onClick={() => removeItem(item.product_id)} className="flex-shrink-0 text-gray-400 hover:text-red-500">
@@ -164,7 +164,7 @@ export function CartDrawer({ store }: { store: Store }) {
           <span>Total</span>
           <span>{fmt(total())}</span>
         </div>
-        <Link href="/checkout" className="block">
+        <Link href={`/checkout?store=${store.slug}`} className="block">
           <Button
             className="mt-2 w-full text-white"
             style={{ background: store.theme.primary }}

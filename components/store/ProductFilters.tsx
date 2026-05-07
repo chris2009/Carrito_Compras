@@ -12,10 +12,11 @@ type Props = {
   categories: Category[]
   currentParams: Record<string, string | undefined>
   primaryColor: string
+  storeSlug?: string
   mobile?: boolean
 }
 
-function FiltersContent({ categories, currentParams, primaryColor }: Props) {
+function FiltersContent({ categories, currentParams, primaryColor, storeSlug }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -27,6 +28,7 @@ function FiltersContent({ categories, currentParams, primaryColor }: Props) {
       params.set(key, value)
     }
     params.delete('page')
+    if (storeSlug) params.set('store', storeSlug)
     router.push(`/productos?${params.toString()}`)
   }
 
@@ -123,7 +125,7 @@ function FiltersContent({ categories, currentParams, primaryColor }: Props) {
         variant="ghost"
         size="sm"
         className="w-full text-gray-500"
-        onClick={() => router.push('/productos')}
+        onClick={() => router.push(storeSlug ? `/productos?store=${storeSlug}` : '/productos')}
       >
         Limpiar filtros
       </Button>

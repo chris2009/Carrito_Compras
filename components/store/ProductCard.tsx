@@ -14,9 +14,10 @@ type Props = {
   product: Product
   currency?: string
   primaryColor?: string
+  storeSlug?: string
 }
 
-export function ProductCard({ product, currency = 'USD', primaryColor = '#6366f1' }: Props) {
+export function ProductCard({ product, currency = 'USD', primaryColor = '#6366f1', storeSlug = '' }: Props) {
   const addItem = useCartStore((s) => s.addItem)
   const [added, setAdded] = useState(false)
 
@@ -45,7 +46,7 @@ export function ProductCard({ product, currency = 'USD', primaryColor = '#6366f1
   return (
     <div className="group flex flex-col overflow-hidden rounded-xl border bg-white shadow-sm hover:shadow-md transition-shadow">
       {/* Image */}
-      <Link href={`/productos/${product.slug}`} className="relative block aspect-square overflow-hidden bg-gray-50">
+      <Link href={`/productos/${product.slug}${storeSlug ? `?store=${storeSlug}` : ''}`} className="relative block aspect-square overflow-hidden bg-gray-50">
         {primaryImage ? (
           <Image
             src={primaryImage.url}
@@ -77,7 +78,7 @@ export function ProductCard({ product, currency = 'USD', primaryColor = '#6366f1
 
       {/* Content */}
       <div className="flex flex-1 flex-col gap-2 p-3">
-        <Link href={`/productos/${product.slug}`}>
+        <Link href={`/productos/${product.slug}${storeSlug ? `?store=${storeSlug}` : ''}`}>
           <h3 className="line-clamp-2 text-sm font-medium text-gray-900 hover:text-indigo-600 transition-colors">
             {product.name}
           </h3>

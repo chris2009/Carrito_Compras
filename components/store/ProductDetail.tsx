@@ -52,13 +52,13 @@ export function ProductDetail({ product, store }: { product: Product; store: Sto
     <div>
       {/* Breadcrumb */}
       <nav className="mb-4 flex items-center gap-1 text-sm text-gray-500">
-        <Link href="/" className="hover:text-gray-900">Inicio</Link>
+        <Link href={`/?store=${store.slug}`} className="hover:text-gray-900">Inicio</Link>
         <ChevronRight className="h-4 w-4" />
-        <Link href="/productos" className="hover:text-gray-900">Productos</Link>
+        <Link href={`/productos?store=${store.slug}`} className="hover:text-gray-900">Productos</Link>
         {product.categories && (
           <>
             <ChevronRight className="h-4 w-4" />
-            <Link href={`/productos?categoria=${product.categories.slug}`} className="hover:text-gray-900">
+            <Link href={`/productos?categoria=${product.categories.slug}&store=${store.slug}`} className="hover:text-gray-900">
               {product.categories.name}
             </Link>
           </>
@@ -114,7 +114,7 @@ export function ProductDetail({ product, store }: { product: Product; store: Sto
         {/* Info */}
         <div className="space-y-4">
           {product.categories && (
-            <Link href={`/productos?categoria=${product.categories.slug}`} className="text-sm text-indigo-600 hover:underline">
+            <Link href={`/productos?categoria=${product.categories.slug}&store=${store.slug}`} className="text-sm text-indigo-600 hover:underline">
               {product.categories.name}
             </Link>
           )}

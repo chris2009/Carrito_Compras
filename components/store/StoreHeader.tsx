@@ -22,7 +22,7 @@ export function StoreHeader({ store }: { store: StoreType }) {
       <header className="sticky top-0 z-40 border-b bg-white shadow-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-3">
           {/* Logo + Name */}
-          <Link href="/" className="flex items-center gap-2 min-w-0 flex-shrink-0">
+          <Link href={`/?store=${store.slug}`} className="flex items-center gap-2 min-w-0 flex-shrink-0">
             {store.logo_url ? (
               <Image
                 src={store.logo_url}
@@ -49,7 +49,7 @@ export function StoreHeader({ store }: { store: StoreType }) {
             <form
               onSubmit={(e) => {
                 e.preventDefault()
-                if (searchQuery) window.location.href = `/productos?q=${encodeURIComponent(searchQuery)}`
+                if (searchQuery) window.location.href = `/productos?q=${encodeURIComponent(searchQuery)}&store=${store.slug}`
               }}
               className="flex w-full gap-2"
             >
@@ -108,7 +108,7 @@ export function StoreHeader({ store }: { store: StoreType }) {
             <form
               onSubmit={(e) => {
                 e.preventDefault()
-                if (searchQuery) window.location.href = `/productos?q=${encodeURIComponent(searchQuery)}`
+                if (searchQuery) window.location.href = `/productos?q=${encodeURIComponent(searchQuery)}&store=${store.slug}`
               }}
               className="flex gap-2"
             >
@@ -127,10 +127,10 @@ export function StoreHeader({ store }: { store: StoreType }) {
               </Button>
             </form>
             <nav className="mt-3 flex flex-col gap-1">
-              <Link href="/" className="rounded px-2 py-2 text-sm hover:bg-gray-50" onClick={() => setMobileMenuOpen(false)}>
+              <Link href={`/?store=${store.slug}`} className="rounded px-2 py-2 text-sm hover:bg-gray-50" onClick={() => setMobileMenuOpen(false)}>
                 Inicio
               </Link>
-              <Link href="/productos" className="rounded px-2 py-2 text-sm hover:bg-gray-50" onClick={() => setMobileMenuOpen(false)}>
+              <Link href={`/productos?store=${store.slug}`} className="rounded px-2 py-2 text-sm hover:bg-gray-50" onClick={() => setMobileMenuOpen(false)}>
                 Productos
               </Link>
             </nav>
@@ -140,8 +140,8 @@ export function StoreHeader({ store }: { store: StoreType }) {
         {/* Desktop nav */}
         <nav className="hidden border-t px-4 py-2 md:block">
           <div className="mx-auto flex max-w-6xl gap-6">
-            <Link href="/" className="text-sm text-gray-600 hover:text-gray-900">Inicio</Link>
-            <Link href="/productos" className="text-sm text-gray-600 hover:text-gray-900">Todos los productos</Link>
+            <Link href={`/?store=${store.slug}`} className="text-sm text-gray-600 hover:text-gray-900">Inicio</Link>
+            <Link href={`/productos?store=${store.slug}`} className="text-sm text-gray-600 hover:text-gray-900">Todos los productos</Link>
           </div>
         </nav>
       </header>

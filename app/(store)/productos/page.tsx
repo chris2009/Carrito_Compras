@@ -20,7 +20,7 @@ type SearchParams = {
 
 export default async function ProductsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const headersList = await headers()
-  const slug = headersList.get('x-store-slug') || 'techhub'
+  const slug = headersList.get('x-store-slug') || ''
   const store = await getCurrentStore(slug)
   if (!store) return null
 
@@ -83,6 +83,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
             categories={categories as Category[] || []}
             currentParams={params}
             primaryColor={store.theme.primary}
+            storeSlug={store.slug}
           />
         </aside>
 
@@ -92,6 +93,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
             categories={categories as Category[] || []}
             currentParams={params}
             primaryColor={store.theme.primary}
+            storeSlug={store.slug}
             mobile
           />
         </div>
@@ -111,6 +113,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                   product={product}
                   currency={store.currency}
                   primaryColor={store.theme.primary}
+                  storeSlug={store.slug}
                 />
               ))}
             </div>
