@@ -361,14 +361,14 @@ export default function OnboardingPage() {
               <div className="flex flex-col gap-2 pt-2">
                 <Button
                   className="w-full bg-indigo-600 hover:bg-indigo-700"
-                  onClick={() => router.push('/dashboard')}
+                  onClick={() => { window.location.href = '/dashboard' }}
                 >
                   Ir a mi panel
                 </Button>
                 <Button
                   variant="outline"
                   className="w-full"
-                  onClick={() => router.push('/dashboard/productos/nuevo')}
+                  onClick={() => { window.location.href = '/dashboard/productos/nuevo' }}
                 >
                   Agregar mi primer producto
                 </Button>

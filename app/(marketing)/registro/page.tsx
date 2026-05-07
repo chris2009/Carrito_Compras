@@ -32,7 +32,7 @@ export default function RegistroPage() {
       })
 
       if (error) throw error
-      router.push('/onboarding')
+      window.location.href = '/onboarding'
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Error al crear la cuenta')
     } finally {
