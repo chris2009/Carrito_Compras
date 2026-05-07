@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { ShoppingBag, Loader2, Eye, EyeOff } from 'lucide-react'
+import { ShoppingBag, Loader2, Eye, EyeOff, Mail } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,6 +15,7 @@ export default function RegistroPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [emailSent, setEmailSent] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -23,14 +24,21 @@ export default function RegistroPage() {
 
     try {
       const supabase = createClient()
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: { emailRedirectTo: `${window.location.origin}/onboarding` },
       })
 
       if (error) throw error
-      window.location.href = '/onboarding'
+
+      // Si hay sesión activa, el email no requiere confirmación → ir directo al onboarding
+      // Si no hay sesión, Supabase envió email de confirmación → mostrar mensaje
+      if (data.session) {
+        window.location.href = '/onboarding'
+      } else {
+        setEmailSent(true)
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Error al crear la cuenta')
     } finally {
@@ -44,6 +52,29 @@ export default function RegistroPage() {
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/onboarding` },
     })
+  }
+
+  if (emailSent) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 to-cyan-50 px-4 py-12">
+        <Card className="w-full max-w-md shadow-lg">
+          <CardContent className="pt-8 text-center space-y-4">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100">
+              <Mail className="h-8 w-8 text-indigo-600" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900">Revisa tu email</h2>
+            <p className="text-gray-600">
+              Enviamos un enlace de confirmación a <strong>{email}</strong>.
+              Haz clic en el enlace para activar tu cuenta y crear tu tienda.
+            </p>
+            <p className="text-sm text-gray-400">¿No llegó? Revisa la carpeta de spam.</p>
+            <Link href="/login" className="block text-sm font-medium text-indigo-600 hover:underline">
+              Volver al login
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
