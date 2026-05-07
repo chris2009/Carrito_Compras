@@ -77,11 +77,11 @@ export default async function StoreLayout({ children }: { children: React.ReactN
     >
       <StoreHeader store={store} />
       <main>{children}</main>
-      <footer className="border-t bg-gray-50 px-4 py-8 mt-16">
-        <div className="mx-auto max-w-6xl text-center text-sm text-gray-500">
-          <p>{store.name} · Powered by ShopFlow</p>
+      <footer className="border-t bg-gray-50 px-4 py-10 mt-16">
+        <div className="mx-auto max-w-6xl text-center space-y-3">
+          <p className="text-sm font-semibold text-gray-700">{store.name}</p>
           {store.contact.whatsapp && (
-            <p className="mt-1">
+            <p className="text-sm text-gray-500">
               <a
                 href={`https://wa.me/${store.contact.whatsapp.replace(/\D/g, '')}`}
                 className="text-green-600 hover:underline"
@@ -92,6 +92,17 @@ export default async function StoreLayout({ children }: { children: React.ReactN
               </a>
             </p>
           )}
+          {store.contact.email && (
+            <p className="text-sm text-gray-500">
+              <a href={`mailto:${store.contact.email}`} className="hover:underline">
+                {store.contact.email}
+              </a>
+            </p>
+          )}
+          <div className="border-t pt-4 text-xs text-gray-400 space-y-1">
+            <p>© {new Date().getFullYear()} {store.name} · Todos los derechos reservados</p>
+            <p>Elaborado por <span className="font-medium text-gray-500">Sherlock</span> · Powered by ShopFlow</p>
+          </div>
         </div>
       </footer>
     </div>

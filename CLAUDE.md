@@ -45,4 +45,26 @@
 - [x] FASE 7: Dashboard del vendedor
 - [x] FASE 8: Super-admin panel
 - [x] FASE 9: SEO + Performance + PWA
-- [ ] FASE 10: Deploy Vercel  ← EN PROGRESO (repo en GitHub, pendiente Vercel + DNS)
+- [x] FASE 10: Deploy Vercel — https://carrito-compras-lemon.vercel.app
+
+## Estado actual del deploy
+- URL producción: https://carrito-compras-lemon.vercel.app
+- Repo GitHub: https://github.com/chris2009/Carrito_Compras
+- Super Admin email: admin@techhub.com (variable SUPERADMIN_EMAIL en Vercel)
+- Confirmación de email: DESACTIVADA en Supabase (facilita testing)
+- Bucket Storage `profiles`: debe existir en Supabase (público) para avatares
+
+## Bugs críticos resueltos post-deploy
+- `router.push` en login/registro causaba race condition con cookies de Supabase SSR → reemplazado por `window.location.href`
+- Middleware no propagaba cookies actualizadas a server components → corregido con patrón oficial Supabase SSR (setAll en request Y response)
+- `.single()` sin `.limit(1)` fallaba si un usuario tenía múltiples tiendas → agregado `.limit(1)` en los 9 archivos del dashboard
+- `SUPERADMIN_EMAIL` apuntaba a `admin@shopflow.app` (placeholder) → corregido a `admin@techhub.com`
+- Superadmin usaba `createClient()` (anon key con RLS) → cambiado a `createServiceClient()` para ver todas las tiendas
+- Links internos del storefront no incluían `?store=` → propagado en StorePage, StoreHeader, ProductCard, ProductDetail, CartDrawer, ProductFilters
+- Fallback hardcoded `|| 'techhub'` en layout y página de productos → cambiado a `|| ''`
+
+## Decisiones de arquitectura importantes
+- Navegación post-auth siempre con `window.location.href` (nunca `router.push`) para garantizar que las cookies de sesión de Supabase lleguen al servidor
+- Onboarding crea tienda con `supabase.auth.getUser()` del cliente — si hay race condition de sesión, se asigna al usuario incorrecto. Resuelto con full page reload antes del onboarding
+- El storefront en Vercel (sin wildcard DNS aún) usa `?store={slug}` como identificador — todos los links internos deben preservar este param
+- superadmin requiere `createServiceClient()` (service role) porque RLS filtraría las tiendas de otros usuarios

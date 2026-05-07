@@ -1,265 +1,204 @@
-# ShopFlow
+# ShopFlow — Plataforma de tiendas online
 
-SaaS multi-tenant de e-commerce. Cualquier persona crea su tienda online en minutos, con su propio subdominio, catálogo, carrito y cobro vía Stripe.
+## ¿Qué es ShopFlow?
 
----
+ShopFlow es una plataforma que permite a cualquier persona crear su propia tienda online en minutos, sin saber programar. Funciona como un "Shopify propio": tú eres el dueño de la plataforma y tus clientes son los vendedores que crean sus tiendas.
 
-## Módulos y funcionalidades
-
-### Marketing / Acceso público
-| Ruta | Descripción |
-|------|-------------|
-| `/` | Landing page con hero, features, precios y testimonios |
-| `/registro` | Crear cuenta (email/password + Google OAuth) |
-| `/login` | Iniciar sesión |
-| `/onboarding` | Wizard 4 pasos: nombre tienda, colores, contacto, ¡listo! |
-
-### Storefront público `{slug}.shopflow.app`
-| Ruta | Descripción |
-|------|-------------|
-| `/` | Portada de la tienda con banner y productos destacados |
-| `/productos` | Catálogo con búsqueda full-text, filtros por categoría, precio, stock y orden |
-| `/productos/[slug]` | Detalle de producto con imágenes, descripción, stock y botón agregar al carrito |
-| `/checkout` | Formulario de datos del cliente + resumen del carrito + cupón de descuento |
-| `/checkout/exito` | Confirmación de pedido post-pago |
-
-### Dashboard del vendedor `/dashboard`
-| Ruta | Descripción |
-|------|-------------|
-| `/dashboard` | Panel principal: métricas del día, pedidos recientes, alertas de stock bajo |
-| `/dashboard/productos` | Lista de productos con búsqueda, estado y acciones |
-| `/dashboard/productos/nuevo` | Crear producto con form completo (nombre, precio, stock, imágenes, categoría, tags) |
-| `/dashboard/productos/[id]` | Editar producto existente |
-| `/dashboard/productos/importar` | Import masivo desde Excel/CSV con preview y validación |
-| `/dashboard/pedidos` | Lista de pedidos filtrable por estado (pendiente, enviado, entregado, etc.) |
-| `/dashboard/clientes` | Lista de clientes con total gastado y número de pedidos |
-| `/dashboard/cupones` | Lista de cupones de descuento (% off, monto fijo, envío gratis) |
-| `/dashboard/configuracion` | Editar nombre, descripción, colores, dominio, contacto y ajustes de tienda |
-
-### Super-Admin `/superadmin`
-| Ruta | Descripción |
-|------|-------------|
-| `/superadmin` | Panel maestro: tiendas activas, MRR estimado, revenue total, productos totales |
-
-### API Routes
-| Endpoint | Descripción |
-|----------|-------------|
-| `POST /api/checkout` | Crear Stripe Checkout Session con validación de stock |
-| `POST /api/webhooks/stripe` | Webhook Stripe: crea pedido en BD al completarse el pago |
-| `POST /api/import/products` | Procesa archivo Excel/CSV y crea productos masivamente |
-| `POST /api/coupons/validate` | Valida cupón (activo, no vencido, con usos disponibles) |
-
-### SEO + PWA
-- `/robots.txt` — dinámico por dominio (store vs marketing)
-- `/sitemap.xml` — dinámico: productos + categorías por tienda
-- `/manifest.webmanifest` — PWA manifest con nombre/color por tienda
-- Open Graph images generadas dinámicamente con `ImageResponse`
-- Favicon e Apple icon generados en runtime
+**Ejemplo real de uso:**
+- Mario entra a la plataforma, se registra y crea su tienda "Mario's Tech"
+- En minutos tiene una tienda en línea con catálogo, carrito y pagos
+- Sus clientes pueden comprar en `marios-tech.shopflow.app`
+- Mario gestiona todo desde su panel de control
 
 ---
 
-## Stack técnico
+## ¿Quiénes usan la plataforma?
 
-| Capa | Tecnología |
-|------|-----------|
-| Framework | Next.js 14 App Router + TypeScript strict |
-| Estilos | Tailwind CSS v3 + Shadcn/ui (@base-ui/react) |
-| Base de datos | Supabase (Postgres + Auth + Storage + RLS) |
-| Estado cliente | Zustand (carrito) |
-| Formularios | React Hook Form + Zod |
-| Pagos | Stripe Checkout Sessions + Webhooks |
-| Import masivo | SheetJS (xlsx) + PapaParse (csv) |
-| Gráficos | Recharts |
-| Emails | Resend + React Email |
-| Deploy | Vercel + wildcard domains `*.shopflow.app` |
+Hay tres tipos de personas que interactúan con ShopFlow:
 
----
+### 1. Tú — el Super Admin (dueño de la plataforma)
+- Ves y gestionas TODAS las tiendas creadas en tu plataforma
+- Accedes a métricas globales: cuántas tiendas activas, ingresos totales, productos
+- Tu acceso: entras con tu email en `/login` y luego vas a `/superadmin`
+- Tu email de super admin está configurado en la variable `SUPERADMIN_EMAIL`
 
-## Modelo multi-tenant
+### 2. Los vendedores (dueños de tiendas)
+- Se registran solos en `/registro`
+- Crean su tienda con un nombre y URL única (slug)
+- Gestionan su catálogo, pedidos, clientes y cupones desde `/dashboard`
+- Su tienda es visible en `{slug}.shopflow.app` (en producción) o `?store={slug}` (en desarrollo)
 
-- Un solo proyecto Supabase — cada fila en `stores` es un tenant
-- RLS aísla datos por `store_id` en todas las tablas
-- En producción: subdominio `{slug}.shopflow.app` (detectado en middleware)
-- En desarrollo: query param `?store={slug}` o header `x-store-slug`
-
-### Planes
-| Plan | Precio | Productos | Imágenes/producto |
-|------|--------|-----------|-------------------|
-| Free | Gratis | Hasta 50 | 3 |
-| Pro | $29/mes | Ilimitados | 10 |
-| Enterprise | $99/mes | Ilimitados | 20 |
+### 3. Los compradores (clientes de las tiendas)
+- No necesitan cuenta
+- Navegan el catálogo, agregan productos al carrito y pagan con tarjeta
+- Reciben confirmación de su pedido por email
 
 ---
 
-## Desarrollo local
+## ¿Qué puede hacer cada vendedor?
 
-### 1. Variables de entorno
+Desde su panel de control (`/dashboard`) el vendedor puede:
 
-```bash
-cp .env.example .env.local
-```
-
-Completar en `.env.local`:
-
-```env
-# ─── SUPABASE ─────────────────────────────────────────────────────
-# supabase.com → tu proyecto → Settings → API
-NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
-SUPABASE_SERVICE_ROLE_KEY=eyJ...
-
-# ─── STRIPE ───────────────────────────────────────────────────────
-# dashboard.stripe.com → Developers → API keys
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-STRIPE_SECRET_KEY=sk_test_...
-# dashboard.stripe.com → Developers → Webhooks → signing secret
-STRIPE_WEBHOOK_SECRET=whsec_...
-
-# ─── RESEND ───────────────────────────────────────────────────────
-# resend.com → API Keys → Create API Key
-RESEND_API_KEY=re_...
-
-# ─── APP ──────────────────────────────────────────────────────────
-NEXT_PUBLIC_APP_DOMAIN=localhost:3000
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-
-# Email con acceso a /superadmin
-SUPERADMIN_EMAIL=admin@shopflow.app
-```
-
-| Variable | Dónde conseguirla |
-|----------|-------------------|
-| `NEXT_PUBLIC_SUPABASE_URL` | supabase.com → proyecto → **Settings → API → Project URL** |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | supabase.com → proyecto → **Settings → API → anon public** |
-| `SUPABASE_SERVICE_ROLE_KEY` | supabase.com → proyecto → **Settings → API → service_role** ⚠️ nunca exponerla al cliente |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | dashboard.stripe.com → **Developers → API keys → Publishable key** |
-| `STRIPE_SECRET_KEY` | dashboard.stripe.com → **Developers → API keys → Secret key** |
-| `STRIPE_WEBHOOK_SECRET` | dashboard.stripe.com → **Developers → Webhooks → Add endpoint → signing secret** |
-| `RESEND_API_KEY` | resend.com → **API Keys → Create API Key** |
-| `NEXT_PUBLIC_APP_DOMAIN` | Tu dominio en producción (`shopflow.app`) o `localhost:3000` en local |
-| `NEXT_PUBLIC_APP_URL` | URL completa con protocolo (`https://shopflow.app` en prod) |
-| `SUPERADMIN_EMAIL` | Email del usuario que accede a `/superadmin` |
-
-### 2. Supabase — ejecutar SQL
-
-Tienes dos opciones:
-
-#### Opción A — SQL Editor en supabase.com (recomendado para empezar rápido)
-
-1. Abre tu proyecto en [supabase.com](https://supabase.com) → **SQL Editor**
-2. Ejecuta primero el schema:
-   - Abre `supabase/migrations/001_schema.sql`
-   - Pega el contenido completo → **Run**
-3. Ejecuta el seed (tienda demo TechHub + 20 productos):
-   - Abre `supabase/seed.sql`
-   - **Antes de pegar**: crea un usuario en **Authentication → Users → Invite user** con el email que quieras
-   - Copia el `UUID` del usuario recién creado
-   - Reemplaza `00000000-0000-0000-0000-000000000001` por ese UUID en la primera línea del seed
-   - Pega el contenido completo → **Run**
-
-#### Opción B — Supabase CLI (desarrollo local)
-
-```bash
-npx supabase start
-npx supabase db push          # aplica migrations/001_schema.sql
-npx supabase db seed          # crea tienda TechHub + 20 productos demo
-```
-
-### 3. Instalar y correr
-
-```bash
-npm install
-npm run dev
-```
-
-### 4. Acceder a la tienda demo
-
-Abre [http://localhost:3000?store=techhub](http://localhost:3000?store=techhub)
+| Sección | Qué hace |
+|---------|----------|
+| **Panel principal** | Ver ventas del día, pedidos pendientes, alertas de stock bajo |
+| **Productos** | Crear, editar y eliminar productos con fotos, precio, stock y descripción |
+| **Importar Excel** | Subir un archivo Excel o CSV para crear cientos de productos a la vez |
+| **Pedidos** | Ver todos los pedidos con su estado (pendiente, enviado, entregado, etc.) |
+| **Clientes** | Ver listado de clientes con historial de compras |
+| **Cupones** | Crear códigos de descuento (porcentaje, monto fijo o envío gratis) |
+| **Configuración** | Cambiar nombre, descripción, colores, datos de contacto de la tienda |
 
 ---
 
-## Cómo acceder — Paso a paso
+## ¿Cómo luce la tienda para los compradores?
 
-> **IMPORTANTE**: hay tres roles distintos. Leer antes de intentar entrar.
-
----
-
-### Rol 1 — Super-Admin (dueño de la plataforma)
-
-Accede al panel maestro donde ves TODAS las tiendas de todos los tenants.
-
-**Requisitos:**
-- El email del usuario en Supabase Auth debe coincidir exactamente con `SUPERADMIN_EMAIL` en `.env.local`
-- Actualmente configurado como: `admin@techhub.com`
-
-**Pasos:**
-1. Ir a `http://localhost:3000/login`
-2. Ingresar con `admin@techhub.com` + tu contraseña
-3. Una vez dentro, navegar manualmente a `http://localhost:3000/superadmin`
-
-> Si ves que te redirige a `/` en lugar de entrar, verifica que `SUPERADMIN_EMAIL=admin@techhub.com` esté en tu `.env.local` y reinicia `npm run dev`.
+Cada tienda tiene su propio sitio con:
+- Página principal con banner y productos destacados
+- Catálogo completo con búsqueda, filtros por categoría y precio
+- Página de detalle de cada producto con fotos y descripción
+- Carrito de compras con soporte para cupones de descuento
+- Checkout seguro con pago por tarjeta (Stripe)
+- Confirmación de pedido tras el pago
 
 ---
 
-### Rol 2 — Vendedor (dueño de una tienda)
+## Credenciales y acceso
 
-Accede al dashboard de su tienda: productos, pedidos, clientes, cupones, configuración.
-
-**Pasos:**
-1. Crear cuenta en `http://localhost:3000/registro`
-2. Completar el onboarding de 4 pasos (nombre tienda, colores, contacto)
-3. Queda en `http://localhost:3000/dashboard`
-
-**Para entrar en sesiones futuras:**
-1. Ir a `http://localhost:3000/login`
-2. Ingresar con el email y contraseña del registro
-3. Redirige automáticamente a `/dashboard`
-
-> **Email no confirmado**: Supabase envía un email de confirmación al registrarse. Si no puedes entrar, revisa tu bandeja de entrada y confirma el email primero. Para saltarte esto en desarrollo, ve a Supabase → Authentication → Settings → desactiva "Enable email confirmations".
-
----
-
-### Rol 3 — Comprador (cliente de una tienda)
-
-No necesita cuenta. Solo navega el storefront de la tienda.
-
-**En desarrollo local:**
-- `http://localhost:3000?store=techhub` → storefront de TechHub
-- `http://localhost:3000?store={slug}` → cualquier otra tienda por su slug
-
----
-
-## Usuarios en Supabase (credenciales actuales)
-
-| Email | Rol | Acceso |
-|-------|-----|--------|
-| `admin@techhub.com` | Super-Admin + Vendedor TechHub | `/superadmin` y `/dashboard` |
-| `sherlock2009@gmail.com` | Vendedor | `/dashboard` de su tienda |
-
-> Si `sherlock2009@gmail.com` no puede entrar: ir a Supabase → Authentication → Users → buscar el usuario → clic en los 3 puntos → **Send magic link** o **Reset password** para resetear la contraseña.
-
----
-
-## Tienda demo — TechHub
-
+### Super Admin
 | Campo | Valor |
 |-------|-------|
-| URL local | `http://localhost:3000?store=techhub` |
-| Slug | `techhub` |
-| Dashboard | `http://localhost:3000/dashboard` (logueado como `admin@techhub.com`) |
-| Email contacto | `hola@techhub.pe` |
-| Productos | 20 (smartphones, laptops, audio, tablets, gaming, accesorios, cámaras, smarthome) |
+| Email | `admin@techhub.com` |
+| URL de acceso | `https://carrito-compras-lemon.vercel.app/login` |
+| Panel maestro | `https://carrito-compras-lemon.vercel.app/superadmin` |
 
----
+> El super admin ve el link "Super Admin" en la barra lateral del dashboard después de loguearse.
 
-## Tarjeta Stripe (modo test)
+### Tienda demo — TechHub
+| Campo | Valor |
+|-------|-------|
+| Email del dueño | `admin@techhub.com` |
+| Dashboard | `/dashboard` (después de login) |
+| Tienda pública | `https://carrito-compras-lemon.vercel.app/?store=techhub` |
+| Productos | 20 productos de electrónica (demo) |
 
+### Tienda — Sherlock's Stuff
+| Campo | Valor |
+|-------|-------|
+| Email del dueño | `sherlock2009@gmail.com` |
+| Tienda pública | `https://carrito-compras-lemon.vercel.app/?store=sherlocks-stuff` |
+
+### Tarjeta de prueba (pagos Stripe en modo test)
 | Campo | Valor |
 |-------|-------|
 | Número | `4242 4242 4242 4242` |
 | Vencimiento | Cualquier fecha futura |
 | CVV | `123` |
-| CP | `12345` |
+| Código postal | `12345` |
+
+---
+
+## Cómo registrarse como vendedor nuevo
+
+1. Ir a `https://carrito-compras-lemon.vercel.app/registro`
+2. Ingresar email y contraseña (mínimo 6 caracteres)
+3. Completar el wizard de 3 pasos:
+   - **Paso 1**: Nombre de la tienda y URL (ej: `mi-tienda`)
+   - **Paso 2**: Color principal y descripción
+   - **Paso 3**: WhatsApp y email de contacto
+4. ¡Listo! La tienda queda activa inmediatamente
+
+> **Nota**: La confirmación de email está desactivada para facilitar las pruebas. En producción real se reactivaría para seguridad.
+
+---
+
+## Instalación y desarrollo local
+
+### Requisitos previos
+- Node.js 18 o superior
+- Una cuenta en [Supabase](https://supabase.com) (gratis)
+- Una cuenta en [Stripe](https://stripe.com) (gratis para pruebas)
+
+### Paso 1 — Clonar e instalar
+```bash
+git clone https://github.com/chris2009/Carrito_Compras
+cd Carrito_Compras
+npm install
+```
+
+### Paso 2 — Variables de entorno
+```bash
+cp .env.example .env.local
+```
+
+Completar `.env.local` con tus claves:
+
+```env
+# Supabase → Settings → API
+NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+
+# Stripe → Developers → API keys
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+
+# Resend → API Keys
+RESEND_API_KEY=re_...
+
+# App
+NEXT_PUBLIC_APP_DOMAIN=localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Email del super admin (el tuyo)
+SUPERADMIN_EMAIL=tu@email.com
+```
+
+### Paso 3 — Configurar Supabase
+1. Ir a [supabase.com](https://supabase.com) → tu proyecto → **SQL Editor**
+2. Pegar y ejecutar el contenido de `supabase/migrations/001_schema.sql`
+3. Pegar y ejecutar el contenido de `supabase/seed.sql` (crea la tienda TechHub demo)
+4. En **Authentication → Settings** → desactivar "Enable email confirmations" (para desarrollo)
+5. En **Storage** → crear bucket llamado `profiles` → marcar como **Público**
+
+### Paso 4 — Correr el proyecto
+```bash
+npm run dev
+```
+
+Abrir: `http://localhost:3000?store=techhub`
+
+---
+
+## Deploy en Vercel (producción)
+
+1. Conectar el repositorio en [vercel.com](https://vercel.com/new)
+2. Agregar todas las variables de entorno del `.env.local`
+3. Cambiar `NEXT_PUBLIC_APP_URL` a tu dominio real
+4. Cambiar `SUPERADMIN_EMAIL` a tu email real
+5. Configurar wildcard domain `*.shopflow.app` en Vercel → Domains
+6. En Stripe: crear webhook apuntando a `https://tudominio.app/api/webhooks/stripe`
+   - Evento requerido: `checkout.session.completed`
+
+---
+
+## Stack tecnológico (para desarrolladores)
+
+| Capa | Tecnología | Para qué sirve |
+|------|-----------|----------------|
+| Framework | Next.js 14 App Router | La base del sitio web |
+| Lenguaje | TypeScript | Programación con menos errores |
+| Estilos | Tailwind CSS + Shadcn/ui | El diseño visual |
+| Base de datos | Supabase (PostgreSQL) | Guardar tiendas, productos, pedidos |
+| Autenticación | Supabase Auth | Login y registro de usuarios |
+| Archivos | Supabase Storage | Fotos de productos y avatares |
+| Pagos | Stripe Checkout | Procesar tarjetas de crédito |
+| Emails | Resend + React Email | Confirmaciones de pedido |
+| Estado | Zustand | Carrito de compras en el navegador |
+| Formularios | React Hook Form + Zod | Validación de formularios |
+| Import Excel | SheetJS + PapaParse | Carga masiva de productos |
+| Deploy | Vercel | Publicar el sitio en internet |
 
 ---
 
@@ -267,56 +206,33 @@ No necesita cuenta. Solo navega el storefront de la tienda.
 
 ```
 ├── app/
-│   ├── (marketing)/          # Landing, login, registro, onboarding
-│   ├── (store)/              # Storefront público del tenant
-│   │   ├── productos/        # Catálogo y detalle de producto
-│   │   └── checkout/         # Checkout y confirmación
-│   ├── (dashboard)/          # Panel del vendedor
-│   │   └── dashboard/        # → URLs /dashboard/*
-│   ├── (superadmin)/         # Panel maestro ShopFlow
-│   │   └── superadmin/       # → URL /superadmin
-│   ├── api/                  # Route handlers (checkout, webhooks, import, coupons)
-│   ├── icon.tsx              # Favicon generado dinámicamente
-│   ├── apple-icon.tsx        # Apple touch icon
-│   ├── opengraph-image.tsx   # OG image marketing
-│   ├── robots.ts             # robots.txt dinámico
-│   ├── sitemap.ts            # Sitemap dinámico por store
-│   └── manifest.ts           # PWA manifest dinámico por store
+│   ├── (marketing)/        # Páginas públicas: landing, login, registro, onboarding
+│   ├── (store)/            # Tienda pública del cliente: catálogo, producto, carrito, checkout
+│   ├── (dashboard)/        # Panel del vendedor: productos, pedidos, configuración
+│   ├── (superadmin)/       # Panel maestro: ver todas las tiendas
+│   └── api/                # Endpoints: checkout Stripe, webhooks, importar, cupones
 ├── components/
-│   ├── store/                # StorePage, ProductCard, ProductDetail, CartDrawer, StoreHeader, ProductFilters
-│   ├── dashboard/            # DashboardSidebar, ProductForm, StoreConfigForm
-│   ├── marketing/            # LandingPage
-│   └── ui/                   # Shadcn base components
+│   ├── store/              # Componentes de la tienda pública
+│   ├── dashboard/          # Componentes del panel del vendedor
+│   └── ui/                 # Componentes visuales base (botones, inputs, etc.)
 ├── lib/
-│   ├── supabase/             # client.ts, server.ts, store-context.ts
-│   ├── store/                # cart.ts (Zustand)
-│   ├── excel/                # parser.ts, template.ts
-│   └── utils/                # types.ts, cn.ts
-├── supabase/
-│   ├── migrations/           # 001_schema.sql (todas las tablas + RLS + índices)
-│   └── seed.sql              # TechHub demo store + 20 productos
-├── middleware.ts             # Multi-tenant routing + auth guards
-├── CLAUDE.md                 # Contexto para Claude Code
-├── memory.md                 # Estado del proyecto
-└── vercel.json               # Config deploy
+│   ├── supabase/           # Conexión a la base de datos
+│   └── store/              # Estado del carrito (Zustand)
+└── supabase/
+    ├── migrations/         # Estructura de la base de datos
+    └── seed.sql            # Datos de ejemplo (tienda TechHub)
 ```
 
 ---
 
-## Schema de base de datos
+## Cómo funciona el multi-tenant (una plataforma, múltiples tiendas)
 
-Tablas principales (todas con RLS habilitado):
+Cada tienda es una fila en la tabla `stores` de la base de datos. El sistema detecta qué tienda mostrar de dos formas:
 
-| Tabla | Descripción |
-|-------|-------------|
-| `plans` | Planes de suscripción (free, pro, enterprise) |
-| `stores` | Un row por tenant — slug, tema, contacto, métricas |
-| `categories` | Categorías por tienda (soporte jerárquico) |
-| `products` | Catálogo con búsqueda full-text (`tsvector`) |
-| `orders` | Pedidos con estado, items JSON, datos de envío |
-| `customers` | Clientes con historial de compras |
-| `coupons` | Cupones de descuento (%, monto fijo, envío gratis) |
-| `import_batches` | Historial de importaciones masivas |
+- **En producción** (con dominio propio): el subdominio — `techhub.shopflow.app` muestra la tienda "techhub"
+- **En desarrollo** (sin dominio): el parámetro URL — `localhost:3000?store=techhub`
+
+La seguridad entre tiendas se garantiza con **RLS (Row Level Security)** de Supabase: cada vendedor solo puede ver y editar los datos de su propia tienda. Es imposible que un vendedor vea los productos o pedidos de otra tienda.
 
 ---
 
@@ -325,12 +241,3 @@ Tablas principales (todas con RLS habilitado):
 ```
 https://github.com/chris2009/Carrito_Compras
 ```
-
-## Deploy en Vercel
-
-1. Conectar repositorio en [vercel.com](https://vercel.com)
-2. Configurar variables de entorno (ver `.env.example`)
-3. Configurar wildcard domain `*.shopflow.app` en Vercel → DNS
-4. Aplicar migration en Supabase producción: `supabase db push --linked`
-5. Configurar Stripe webhook: `https://shopflow.app/api/webhooks/stripe`
-6. Evento webhook requerido: `checkout.session.completed`

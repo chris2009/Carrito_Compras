@@ -1,14 +1,15 @@
 'use client'
 
+import { useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, Package, Upload, ShoppingBag, Users,
-  Tag, Settings, ExternalLink, LogOut, Store, ChevronRight, ShieldCheck,
+  Tag, Settings, ExternalLink, LogOut, Store, ChevronRight, ShieldCheck, Camera, Loader2,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
@@ -38,11 +39,39 @@ type Props = {
 export function DashboardSidebar({ store, user, isSuperAdmin }: Props) {
   const pathname = usePathname()
   const router = useRouter()
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(
+    (user.user_metadata?.avatar_url as string) || null
+  )
+  const [uploading, setUploading] = useState(false)
 
   async function handleSignOut() {
     const supabase = createClient()
     await supabase.auth.signOut()
     router.push('/login')
+  }
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    try {
+      const supabase = createClient()
+      const ext = file.name.split('.').pop()
+      const path = `${user.id}/avatar.${ext}`
+      const { error: uploadError } = await supabase.storage
+        .from('profiles')
+        .upload(path, file, { upsert: true })
+      if (uploadError) throw uploadError
+      const { data: { publicUrl } } = supabase.storage.from('profiles').getPublicUrl(path)
+      await supabase.auth.updateUser({ data: { avatar_url: publicUrl } })
+      setAvatarUrl(publicUrl)
+    } catch (err) {
+      console.error('Error al subir avatar:', err)
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
   }
 
   const initials = (user.email || 'U').slice(0, 2).toUpperCase()
@@ -116,11 +145,34 @@ export function DashboardSidebar({ store, user, isSuperAdmin }: Props) {
         {/* User */}
         <div className="border-t p-3">
           <div className="flex items-center gap-2 rounded-lg p-2 hover:bg-gray-50">
-            <Avatar className="h-8 w-8">
-              <AvatarFallback className="text-xs bg-indigo-100 text-indigo-700">{initials}</AvatarFallback>
-            </Avatar>
+            {/* Avatar con upload al hacer clic */}
+            <div
+              className="relative cursor-pointer group flex-shrink-0"
+              onClick={() => !uploading && fileInputRef.current?.click()}
+              title="Cambiar foto de perfil"
+            >
+              <Avatar className="h-8 w-8">
+                {avatarUrl && <AvatarImage src={avatarUrl} alt={user.email || ''} />}
+                <AvatarFallback className="text-xs bg-indigo-100 text-indigo-700">{initials}</AvatarFallback>
+              </Avatar>
+              <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
+                {uploading
+                  ? <Loader2 className="h-3 w-3 text-white animate-spin" />
+                  : <Camera className="h-3 w-3 text-white" />
+                }
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+            </div>
+
             <div className="flex-1 min-w-0">
               <p className="truncate text-xs font-medium text-gray-900">{user.email}</p>
+              <p className="text-[10px] text-gray-400">Clic en foto para cambiar</p>
             </div>
             <button onClick={handleSignOut} title="Cerrar sesión" className="text-gray-400 hover:text-gray-700">
               <LogOut className="h-4 w-4" />
