@@ -1,0 +1,263 @@
+<mxfile host="app.diagrams.net" modified="2026-05-07" version="21.0.0">
+  <diagram name="ShopFlow Architecture" id="shopflow-arch">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2600" pageHeight="1700" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- TITLE -->
+        <mxCell id="title" value="ShopFlow — Arquitectura de la Aplicación" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=24;fontStyle=1;fontColor=#1a237e;" vertex="1" parent="1">
+          <mxGeometry x="300" y="20" width="2000" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- ===== CAPA DE USUARIOS ===== -->
+        <mxCell id="users-bg" value="CAPA DE USUARIOS" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="95" width="2480" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="comprador" value="🛒 COMPRADOR&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Sin cuenta · Navega y compra&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="160" y="130" width="230" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="vendedor" value="🏪 VENDEDOR&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Dueño de tienda · Gestiona catálogo&lt;br/&gt;Importa productos · Configura tienda&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="125" width="290" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="superadmin-user" value="🛡️ SUPER ADMIN&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Dueño de la plataforma&lt;br/&gt;Ve TODAS las tiendas&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="2130" y="130" width="290" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ===== VERCEL ===== -->
+        <mxCell id="vercel-bg" value="VERCEL — Deploy · CDN · Serverless Functions" style="swimlane;startSize=35;fillColor=#f5f5f5;strokeColor=#555555;fontSize=14;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="60" y="290" width="2480" height="640" as="geometry" />
+        </mxCell>
+
+        <!-- Middleware -->
+        <mxCell id="middleware" value="⚙️ MIDDLEWARE&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Detecta tienda por:&lt;br/&gt;• Subdominio: techhub.shopflow.app&lt;br/&gt;• Parámetro: ?store=techhub&lt;br/&gt;Inyecta header x-store-slug&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="360" width="230" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- Next.js container -->
+        <mxCell id="nextjs-bg" value="NEXT.JS 14 APP ROUTER — TypeScript Strict" style="swimlane;startSize=30;fillColor=#fafafa;strokeColor=#aaaaaa;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="335" width="1470" height="565" as="geometry" />
+        </mxCell>
+
+        <!-- Route groups -->
+        <mxCell id="grp-marketing" value="(marketing)&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;/login&lt;br/&gt;/registro&lt;br/&gt;/onboarding&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="385" y="390" width="165" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="grp-store" value="(store)&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;/ (home tienda)&lt;br/&gt;/productos&lt;br/&gt;/productos/[slug]&lt;br/&gt;/checkout · /checkout/exito&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="380" width="175" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="grp-dashboard" value="(dashboard)&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;/dashboard&lt;br/&gt;/dashboard/productos&lt;br/&gt;/dashboard/pedidos&lt;br/&gt;/dashboard/clientes&lt;br/&gt;/dashboard/cupones&lt;br/&gt;/dashboard/configuracion&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="785" y="370" width="185" height="160" as="geometry" />
+        </mxCell>
+
+        <mxCell id="grp-superadmin" value="(superadmin)&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;/superadmin&lt;br/&gt;Usa Service Role Key&lt;br/&gt;Bypasea RLS&lt;br/&gt;Ve todas las tiendas&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1005" y="390" width="185" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- API Routes -->
+        <mxCell id="api-bg" value="API ROUTES — Ejecutan en el servidor (Node.js)" style="swimlane;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="385" y="565" width="860" height="300" as="geometry" />
+        </mxCell>
+
+        <mxCell id="api-checkout" value="POST /api/checkout&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Crea Stripe Checkout Session&lt;br/&gt;Valida stock · Aplica cupón&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="405" y="608" width="240" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="api-webhook" value="POST /api/webhooks/stripe&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Verifica firma HMAC de Stripe&lt;br/&gt;Crea pedido · Descuenta stock&lt;br/&gt;Envía email de confirmación&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="665" y="598" width="245" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="api-import" value="POST /api/import/products&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Parsea Excel/CSV (SheetJS)&lt;br/&gt;Inserta productos en lotes de 50&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="405" y="710" width="240" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="api-coupons" value="POST /api/coupons/validate&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Valida código de descuento&lt;br/&gt;Calcula precio final del pedido&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="665" y="718" width="245" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Client State -->
+        <mxCell id="client-bg" value="ESTADO EN EL CLIENTE (Browser)" style="swimlane;startSize=28;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1870" y="335" width="610" height="565" as="geometry" />
+        </mxCell>
+
+        <mxCell id="zustand" value="🛒 Zustand&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Carrito de compras&lt;br/&gt;Persiste en localStorage&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1890" y="380" width="250" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="next-themes" value="🌙 next-themes&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Dark / Light mode&lt;br/&gt;Persiste en localStorage&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="2210" y="380" width="250" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="shadcn" value="🎨 Shadcn/ui + Tailwind CSS&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Componentes accesibles&lt;br/&gt;Dark mode con clase .dark&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1890" y="480" width="250" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rhf" value="📋 React Hook Form + Zod&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Validación de formularios&lt;br/&gt;con tipado TypeScript&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="2210" y="480" width="250" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sheetjs" value="📊 SheetJS + PapaParse&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Lee archivos .xlsx y .csv&lt;br/&gt;Valida datos antes de importar&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1890" y="580" width="570" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sticky" value="📌 StickyFooter + ThemeToggle&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Footer fijo · Botón Sol/Luna&lt;br/&gt;© ShopFlow · Elaborada por Sherlock&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1890" y="680" width="570" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ===== EXTERNAL SERVICES ===== -->
+
+        <!-- SUPABASE -->
+        <mxCell id="supabase-bg" value="SUPABASE" style="swimlane;startSize=35;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=15;fontStyle=1;fontColor=#1a3a1a;" vertex="1" parent="1">
+          <mxGeometry x="60" y="985" width="900" height="430" as="geometry" />
+        </mxCell>
+
+        <mxCell id="supa-db" value="🗄️ PostgreSQL + RLS&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;&lt;b&gt;Row Level Security&lt;/b&gt;&lt;br/&gt;Cada tienda completamente aislada&lt;br/&gt;──────────────────&lt;br/&gt;stores · products · categories&lt;br/&gt;orders · order_items · customers&lt;br/&gt;coupons · import_batches&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1035" width="260" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="supa-auth" value="🔐 Supabase Auth&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Login · Registro&lt;br/&gt;JWT Tokens&lt;br/&gt;Sesiones SSR&lt;br/&gt;(Server Components)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="370" y="1035" width="220" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="supa-storage" value="🖼️ Storage&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Bucket: profiles&lt;br/&gt;(avatares vendedores)&lt;br/&gt;&lt;br/&gt;Bucket: products&lt;br/&gt;(imágenes de productos)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="1035" width="220" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="supa-keys" value="🔑 NEXT_PUBLIC_SUPABASE_ANON_KEY → cliente (RLS activo, seguro exponerla)&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;SUPABASE_SERVICE_ROLE_KEY → SOLO servidor · bypasea RLS · NUNCA al cliente&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1260" width="850" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- STRIPE -->
+        <mxCell id="stripe-bg" value="STRIPE" style="swimlane;startSize=35;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=15;fontStyle=1;fontColor=#2d0a4f;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="985" width="680" height="430" as="geometry" />
+        </mxCell>
+
+        <mxCell id="stripe-checkout" value="💳 Checkout Session&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Página de pago segura de Stripe&lt;br/&gt;Redirige al comprador&lt;br/&gt;Tarjetas crédito/débito&lt;br/&gt;Modo test y producción&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="1035" width="265" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="stripe-wh" value="🔔 Webhooks&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;checkout.session.completed&lt;br/&gt;Notifica al servidor del pago&lt;br/&gt;→ POST /api/webhooks/stripe&lt;br/&gt;Firma verificada con HMAC&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1310" y="1035" width="265" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="stripe-keys" value="🔑 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY → cliente (identifica tu cuenta)&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;STRIPE_SECRET_KEY → SOLO servidor · crea cobros reales · NUNCA al cliente&lt;br/&gt;STRIPE_WEBHOOK_SECRET → verifica que el evento viene realmente de Stripe&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="1200" width="630" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- RESEND -->
+        <mxCell id="resend-bg" value="RESEND" style="swimlane;startSize=35;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=15;fontStyle=1;fontColor=#7d4000;" vertex="1" parent="1">
+          <mxGeometry x="1730" y="985" width="560" height="430" as="geometry" />
+        </mxCell>
+
+        <mxCell id="resend-email" value="📧 Email Transaccional&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Confirmación de pedido&lt;br/&gt;con resumen de productos&lt;br/&gt;y monto total pagado&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1750" y="1035" width="240" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="react-email" value="🎨 React Email&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Plantillas HTML&lt;br/&gt;para emails de&lt;br/&gt;confirmación&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="2020" y="1035" width="240" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="resend-keys" value="🔑 RESEND_API_KEY → SOLO servidor · NUNCA al cliente&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Se invoca dentro del webhook de Stripe tras confirmar el pago&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1750" y="1185" width="510" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ===== ARROWS ===== -->
+
+        <!-- Users → App -->
+        <mxCell id="e1" value="navega y compra" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#6c8ebf;strokeWidth=2;fontStyle=1;fontSize=10;fontColor=#006EAF;" edge="1" source="comprador" target="grp-store" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e2" value="gestiona tienda" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#6c8ebf;strokeWidth=2;fontStyle=1;fontSize=10;fontColor=#006EAF;" edge="1" source="vendedor" target="grp-dashboard" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e3" value="administra plataforma" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#b85450;strokeWidth=2;fontStyle=1;fontSize=10;fontColor=#b85450;" edge="1" source="superadmin-user" target="grp-superadmin" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Middleware → Next.js -->
+        <mxCell id="e4" value="x-store-slug header" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#d6b656;strokeWidth=2;fontStyle=1;fontSize=10;fontColor=#856400;" edge="1" source="middleware" target="nextjs-bg" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Checkout flow -->
+        <mxCell id="e5" value="1. Crea sesión de pago" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#9673a6;strokeWidth=2;fontStyle=1;fontSize=10;fontColor=#9673a6;" edge="1" source="api-checkout" target="stripe-checkout" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e6" value="2. Pago completado" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#9673a6;strokeWidth=2;dashed=1;fontStyle=1;fontSize=10;fontColor=#9673a6;" edge="1" source="stripe-wh" target="api-webhook" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e7" value="3. Guarda pedido" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;strokeWidth=2;fontStyle=1;fontSize=10;fontColor=#336600;" edge="1" source="api-webhook" target="supa-db" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e8" value="4. Envía email" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#d79b00;strokeWidth=2;fontStyle=1;fontSize=10;fontColor=#7d5a00;" edge="1" source="api-webhook" target="resend-email" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Next.js → Supabase -->
+        <mxCell id="e9" value="Consultas DB (RLS activo)" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;strokeWidth=2;fontStyle=1;fontSize=10;fontColor=#336600;" edge="1" source="nextjs-bg" target="supabase-bg" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Auth -->
+        <mxCell id="e10" value="Login / Registro" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;strokeWidth=1;dashed=1;fontSize=10;" edge="1" source="grp-marketing" target="supa-auth" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Storage upload -->
+        <mxCell id="e11" value="Upload fotos" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;strokeWidth=1;dashed=1;fontSize=10;" edge="1" source="grp-dashboard" target="supa-storage" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Import → DB -->
+        <mxCell id="e12" value="Inserta productos" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;strokeWidth=1;dashed=1;fontSize=10;" edge="1" source="api-import" target="supa-db" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===== LEGEND ===== -->
+        <mxCell id="legend-bg" value="LEYENDA" style="swimlane;startSize=28;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="2340" y="985" width="200" height="295" as="geometry" />
+        </mxCell>
+
+        <mxCell id="l1c" value="" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1"><mxGeometry x="2355" y="1028" width="28" height="18" as="geometry"/></mxCell>
+        <mxCell id="l1t" value="Supabase (DB · Auth · Storage)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="2393" y="1028" width="140" height="18" as="geometry"/></mxCell>
+
+        <mxCell id="l2c" value="" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1"><mxGeometry x="2355" y="1060" width="28" height="18" as="geometry"/></mxCell>
+        <mxCell id="l2t" value="Stripe (Pagos)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="2393" y="1060" width="140" height="18" as="geometry"/></mxCell>
+
+        <mxCell id="l3c" value="" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1"><mxGeometry x="2355" y="1092" width="28" height="18" as="geometry"/></mxCell>
+        <mxCell id="l3t" value="Resend (Emails)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="2393" y="1092" width="140" height="18" as="geometry"/></mxCell>
+
+        <mxCell id="l4c" value="" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1"><mxGeometry x="2355" y="1124" width="28" height="18" as="geometry"/></mxCell>
+        <mxCell id="l4t" value="API Routes (servidor)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="2393" y="1124" width="140" height="18" as="geometry"/></mxCell>
+
+        <mxCell id="l5c" value="" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1"><mxGeometry x="2355" y="1156" width="28" height="18" as="geometry"/></mxCell>
+        <mxCell id="l5t" value="Claves secretas (servidor)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="2393" y="1156" width="140" height="18" as="geometry"/></mxCell>
+
+        <mxCell id="l6c" value="" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="2355" y="1188" width="28" height="18" as="geometry"/></mxCell>
+        <mxCell id="l6t" value="Frontend / Usuarios" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="2393" y="1188" width="140" height="18" as="geometry"/></mxCell>
+
+        <mxCell id="l7c" value="" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1"><mxGeometry x="2355" y="1220" width="28" height="18" as="geometry"/></mxCell>
+        <mxCell id="l7t" value="Auth / Marketing" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="2393" y="1220" width="140" height="18" as="geometry"/></mxCell>
+
+        <mxCell id="l8c" value="" style="fillColor=none;strokeColor=#9673a6;strokeWidth=2;dashed=1;" vertex="1" parent="1"><mxGeometry x="2355" y="1252" width="28" height="18" as="geometry"/></mxCell>
+        <mxCell id="l8t" value="Flujo asíncrono (webhook)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="2393" y="1252" width="140" height="18" as="geometry"/></mxCell>
+
+        <!-- Credit -->
+        <mxCell id="credit" value="© 2026 ShopFlow · Elaborada por Sherlock" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontStyle=2;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1445" width="2480" height="30" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
