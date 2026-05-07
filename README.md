@@ -156,11 +156,41 @@ SUPERADMIN_EMAIL=tu@email.com
 ```
 
 ### Paso 3 — Configurar Supabase
+
+**Base de datos:**
 1. Ir a [supabase.com](https://supabase.com) → tu proyecto → **SQL Editor**
 2. Pegar y ejecutar el contenido de `supabase/migrations/001_schema.sql`
 3. Pegar y ejecutar el contenido de `supabase/seed.sql` (crea la tienda TechHub demo)
 4. En **Authentication → Settings** → desactivar "Enable email confirmations" (para desarrollo)
-5. En **Storage** → crear bucket llamado `profiles` → marcar como **Público**
+
+**Storage (imágenes):**
+
+5. En **Storage** → crear dos buckets públicos:
+   - `profiles` → para fotos de perfil de los vendedores
+   - `products` → para imágenes de productos
+
+6. En **SQL Editor** ejecutar las políticas de acceso:
+
+```sql
+-- Bucket profiles
+CREATE POLICY "upload_own_avatar" ON storage.objects FOR INSERT TO authenticated
+WITH CHECK (bucket_id = 'profiles' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+CREATE POLICY "update_own_avatar" ON storage.objects FOR UPDATE TO authenticated
+USING (bucket_id = 'profiles' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+CREATE POLICY "public_read_profiles" ON storage.objects FOR SELECT TO public
+USING (bucket_id = 'profiles');
+
+-- Bucket products
+CREATE POLICY "upload_product_images" ON storage.objects FOR INSERT TO authenticated
+WITH CHECK (bucket_id = 'products');
+
+CREATE POLICY "public_read_products" ON storage.objects FOR SELECT TO public
+USING (bucket_id = 'products');
+```
+
+> Sin estas políticas los uploads fallan con error "row-level security policy".
 
 ### Paso 4 — Correr el proyecto
 ```bash

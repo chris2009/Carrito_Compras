@@ -52,7 +52,9 @@
 - Repo GitHub: https://github.com/chris2009/Carrito_Compras
 - Super Admin email: admin@techhub.com (variable SUPERADMIN_EMAIL en Vercel)
 - Confirmación de email: DESACTIVADA en Supabase (facilita testing)
-- Bucket Storage `profiles`: debe existir en Supabase (público) para avatares
+- Bucket Storage `profiles`: debe existir en Supabase (público) para avatares de usuario
+- Bucket Storage `products`: debe existir en Supabase (público) para imágenes de productos
+- Ambos buckets requieren políticas RLS en storage.objects (ver sección Supabase Storage)
 
 ## Bugs críticos resueltos post-deploy
 - `router.push` en login/registro causaba race condition con cookies de Supabase SSR → reemplazado por `window.location.href`
@@ -62,6 +64,29 @@
 - Superadmin usaba `createClient()` (anon key con RLS) → cambiado a `createServiceClient()` para ver todas las tiendas
 - Links internos del storefront no incluían `?store=` → propagado en StorePage, StoreHeader, ProductCard, ProductDetail, CartDrawer, ProductFilters
 - Fallback hardcoded `|| 'techhub'` en layout y página de productos → cambiado a `|| ''`
+
+## Supabase Storage — configuración requerida
+
+Ejecutar en SQL Editor de Supabase tras crear los buckets `profiles` y `products` como públicos:
+
+```sql
+-- Bucket: profiles (avatares de usuarios)
+CREATE POLICY "upload_own_avatar" ON storage.objects FOR INSERT TO authenticated
+WITH CHECK (bucket_id = 'profiles' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+CREATE POLICY "update_own_avatar" ON storage.objects FOR UPDATE TO authenticated
+USING (bucket_id = 'profiles' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+CREATE POLICY "public_read_profiles" ON storage.objects FOR SELECT TO public
+USING (bucket_id = 'profiles');
+
+-- Bucket: products (imágenes de productos)
+CREATE POLICY "upload_product_images" ON storage.objects FOR INSERT TO authenticated
+WITH CHECK (bucket_id = 'products');
+
+CREATE POLICY "public_read_products" ON storage.objects FOR SELECT TO public
+USING (bucket_id = 'products');
+```
 
 ## Decisiones de arquitectura importantes
 - Navegación post-auth siempre con `window.location.href` (nunca `router.push`) para garantizar que las cookies de sesión de Supabase lleguen al servidor
