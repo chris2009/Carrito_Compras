@@ -17,9 +17,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   if (!store) redirect('/onboarding')
 
+  const isSuperAdmin = user.email === process.env.SUPERADMIN_EMAIL
+
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <DashboardSidebar store={store} user={user} />
+      <DashboardSidebar store={store} user={user} isSuperAdmin={isSuperAdmin} />
       <main className="flex-1 overflow-auto">
         <div className="min-h-screen p-4 pb-20 md:p-8 md:pb-8">
           {children}

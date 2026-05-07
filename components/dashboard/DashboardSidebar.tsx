@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, Package, Upload, ShoppingBag, Users,
-  Tag, Settings, ExternalLink, LogOut, Store, ChevronRight,
+  Tag, Settings, ExternalLink, LogOut, Store, ChevronRight, ShieldCheck,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -32,9 +32,10 @@ type Props = {
     theme: { primary: string }
   }
   user: User
+  isSuperAdmin: boolean
 }
 
-export function DashboardSidebar({ store, user }: Props) {
+export function DashboardSidebar({ store, user, isSuperAdmin }: Props) {
   const pathname = usePathname()
   const router = useRouter()
 
@@ -99,6 +100,18 @@ export function DashboardSidebar({ store, user }: Props) {
             )
           })}
         </nav>
+
+        {/* Super Admin link */}
+        {isSuperAdmin && (
+          <div className="px-3 pb-2">
+            <Link href="/superadmin">
+              <div className="flex items-center gap-3 rounded-lg bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-100">
+                <ShieldCheck className="h-4 w-4 flex-shrink-0" />
+                Super Admin
+              </div>
+            </Link>
+          </div>
+        )}
 
         {/* User */}
         <div className="border-t p-3">
