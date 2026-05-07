@@ -8,41 +8,43 @@ export async function middleware(request: NextRequest) {
 
   let storeSlug: string | null = null
 
-  // Subdominio en producción: techhub.shopflow.app
   const isSubdomain = hostname.endsWith(`.${appDomain}`) && !hostname.startsWith('www.')
   if (isSubdomain) {
     storeSlug = hostname.replace(`.${appDomain}`, '')
   } else {
-    // Fallback: ?store=techhub — funciona en local y en Vercel sin dominio propio
     storeSlug =
       request.nextUrl.searchParams.get('store') ||
       request.headers.get('x-store-slug') ||
       null
   }
 
-  const requestHeaders = new Headers(request.headers)
-  if (storeSlug) requestHeaders.set('x-store-slug', storeSlug)
-
-  let response = NextResponse.next({ request: { headers: requestHeaders } })
+  // Patrón correcto Supabase SSR: cookies deben actualizarse en request Y response
+  // para que los server components lean la sesión refrescada
+  let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll: () => request.cookies.getAll(),
-        setAll: (cookiesToSet) => {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+          supabaseResponse = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
+            supabaseResponse.cookies.set(name, value, options)
           )
         },
       },
     }
   )
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // Propagar store slug a server components via header
+  if (storeSlug) supabaseResponse.headers.set('x-store-slug', storeSlug)
 
   if (pathname.startsWith('/dashboard') && !user)
     return NextResponse.redirect(new URL('/login', request.url))
@@ -51,7 +53,7 @@ export async function middleware(request: NextRequest) {
   if (pathname.startsWith('/superadmin') && user?.email !== process.env.SUPERADMIN_EMAIL)
     return NextResponse.redirect(new URL('/', request.url))
 
-  return response
+  return supabaseResponse
 }
 
 export const config = {
