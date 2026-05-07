@@ -68,7 +68,7 @@ export function generateTemplate(): Uint8Array<ArrayBuffer> {
   wsInstr['!cols'] = [{ wch: 25 }, { wch: 70 }]
   XLSX.utils.book_append_sheet(wb, wsInstr, 'Instrucciones')
 
-  return XLSX.write(wb, { type: 'uint8array', bookType: 'xlsx' }) as Uint8Array<ArrayBuffer>
+  return new Uint8Array(XLSX.write(wb, { type: 'array', bookType: 'xlsx' }) as number[])
 }
 
 export function generateCsvTemplate(): string {
