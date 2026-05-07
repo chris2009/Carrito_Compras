@@ -13,7 +13,7 @@ const EXAMPLE_ROWS = [
   ['MacBook Pro M3', 'Laptop Apple con chip M3', 'Portátil para profesionales', 1999, 2199, 10, 'APL-MBP-M3', 'Laptops', 'apple,macbook,m3', 'https://ejemplo.com/img3.jpg', '', '', 'Apple', 'MacBook Pro 14', 1600, 'SI', 'SI'],
 ]
 
-export function generateTemplate(): Uint8Array {
+export function generateTemplate(): Uint8Array<ArrayBuffer> {
   const wb = XLSX.utils.book_new()
 
   // Products sheet
@@ -68,7 +68,7 @@ export function generateTemplate(): Uint8Array {
   wsInstr['!cols'] = [{ wch: 25 }, { wch: 70 }]
   XLSX.utils.book_append_sheet(wb, wsInstr, 'Instrucciones')
 
-  return XLSX.write(wb, { type: 'uint8array', bookType: 'xlsx' }) as Uint8Array
+  return XLSX.write(wb, { type: 'uint8array', bookType: 'xlsx' }) as Uint8Array<ArrayBuffer>
 }
 
 export function generateCsvTemplate(): string {
