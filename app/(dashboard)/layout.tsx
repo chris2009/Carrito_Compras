@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar'
+import { StickyFooter } from '@/components/StickyFooter'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -20,13 +21,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const isSuperAdmin = user.email === process.env.SUPERADMIN_EMAIL
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
       <DashboardSidebar store={store} user={user} isSuperAdmin={isSuperAdmin} />
       <main className="flex-1 overflow-auto">
-        <div className="min-h-screen p-4 pb-20 md:p-8 md:pb-8">
+        <div className="min-h-screen p-4 pb-24 md:p-8 md:pb-16">
           {children}
         </div>
       </main>
+      <StickyFooter className="hidden md:flex" />
     </div>
   )
 }

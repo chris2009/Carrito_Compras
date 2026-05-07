@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(npx --version)",
+      "Bash(npx create-next-app@latest *)",
+      "Read(//tmp/**)",
+      "Bash(npx create-next-app@14 shopflow --typescript --tailwind --eslint --app --no-src-dir '--import-alias=@/*' --yes)",
+      "Bash(npm install *)",
+      "Bash(npx shadcn@latest *)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(mkdir -p \"/mnt/d/APRENDIZAJE/PROYECTOS/Carrito_electronico/app/\\(dashboard\\)/productos/[slug]\")",
+      "Bash(cp \"/mnt/d/APRENDIZAJE/PROYECTOS/Carrito_electronico/app/\\(dashboard\\)/productos/[id]/page.tsx\" \"/mnt/d/APRENDIZAJE/PROYECTOS/Carrito_electronico/app/\\(dashboard\\)/productos/[slug]/page.tsx\")",
+      "Bash(rm -rf \"/mnt/d/APRENDIZAJE/PROYECTOS/Carrito_electronico/app/\\(dashboard\\)/productos/[id]\")",
+      "Bash(wait)",
+      "Bash(grep -v \"^$\")",
+      "Bash(sed -n '50,60p' \"/mnt/d/APRENDIZAJE/PROYECTOS/Carrito_electronico/app/\\(dashboard\\)/dashboard/productos/importar/page.tsx\")",
+      "Bash(sed -n '25,35p' \"/mnt/d/APRENDIZAJE/PROYECTOS/Carrito_electronico/app/\\(store\\)/checkout/page.tsx\")",
+      "Bash(sed -n '60,68p' \"/mnt/d/APRENDIZAJE/PROYECTOS/Carrito_electronico/app/\\(store\\)/checkout/page.tsx\")",
+      "Bash(npx next *)",
+      "Bash(git commit *)",
+      "Bash(git add *)",
+      "Bash(git remote *)",
+      "Bash(git branch *)",
+      "Bash(grep -rn \"\\\\.eq\\('owner_id', user\\\\.id\\)\\\\s*$\\\\s*\\\\.single\\(\\)\" \"/mnt/d/APRENDIZAJE/PROYECTOS/Carrito_electronico/app/\\(dashboard\\)\")"
+    ]
+  }
+}

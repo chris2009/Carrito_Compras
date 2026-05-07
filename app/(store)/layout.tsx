@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { headers } from 'next/headers'
 import { getCurrentStore } from '@/lib/supabase/store-context'
 import { StoreHeader } from '@/components/store/StoreHeader'
+import { StickyFooter } from '@/components/StickyFooter'
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers()
@@ -59,8 +60,8 @@ export default async function StoreLayout({ children }: { children: React.ReactN
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Tienda no encontrada</h1>
-          <p className="mt-2 text-gray-600">La tienda &ldquo;{slug}&rdquo; no existe o no está activa.</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Tienda no encontrada</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">La tienda &ldquo;{slug}&rdquo; no existe o no está activa.</p>
         </div>
       </div>
     )
@@ -68,7 +69,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
 
   return (
     <div
-      className="min-h-screen"
+      className="min-h-screen pb-8"
       style={{
         '--color-primary': store.theme.primary,
         '--color-secondary': store.theme.secondary,
@@ -77,14 +78,14 @@ export default async function StoreLayout({ children }: { children: React.ReactN
     >
       <StoreHeader store={store} />
       <main>{children}</main>
-      <footer className="border-t bg-gray-50 px-4 py-10 mt-16">
+      <footer className="border-t border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900 px-4 py-10 mt-16">
         <div className="mx-auto max-w-6xl text-center space-y-3">
-          <p className="text-sm font-semibold text-gray-700">{store.name}</p>
+          <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{store.name}</p>
           {store.contact.whatsapp && (
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               <a
                 href={`https://wa.me/${store.contact.whatsapp.replace(/\D/g, '')}`}
-                className="text-green-600 hover:underline"
+                className="text-green-600 dark:text-green-400 hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -93,18 +94,19 @@ export default async function StoreLayout({ children }: { children: React.ReactN
             </p>
           )}
           {store.contact.email && (
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               <a href={`mailto:${store.contact.email}`} className="hover:underline">
                 {store.contact.email}
               </a>
             </p>
           )}
-          <div className="border-t pt-4 text-xs text-gray-400 space-y-1">
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-4 text-xs text-gray-400 dark:text-gray-500 space-y-1">
             <p>© {new Date().getFullYear()} {store.name} · Todos los derechos reservados</p>
-            <p>Elaborado por <span className="font-medium text-gray-500">Sherlock</span> · Powered by ShopFlow</p>
+            <p>Powered by <span className="font-medium text-gray-500 dark:text-gray-400">ShopFlow</span></p>
           </div>
         </div>
       </footer>
+      <StickyFooter />
     </div>
   )
 }
