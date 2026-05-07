@@ -1,10 +1,10 @@
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate } from '@/lib/utils/cn'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default async function SuperAdminPage() {
-  const supabase = await createClient()
+  const supabase = await createServiceClient()
 
   const [{ data: stores }, { count: totalStores }, { data: metrics }] = await Promise.all([
     supabase.from('stores').select('*, plans(name)').order('created_at', { ascending: false }).limit(50),
