@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, Save, Upload, X } from 'lucide-react'
+import { Loader2, Save, Upload, X, LayoutGrid, Image, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -10,11 +10,12 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { createClient } from '@/lib/supabase/client'
 import { slugify } from '@/lib/utils/cn'
 import { toast } from 'sonner'
 import type { Product } from '@/lib/utils/types'
+
+type Tab = 'general' | 'imagenes' | 'inventario'
 
 type Props = {
   store: { id: string; currency: string }
@@ -24,6 +25,7 @@ type Props = {
 
 export function ProductForm({ store, categories, product }: Props) {
   const router = useRouter()
+  const [activeTab, setActiveTab] = useState<Tab>('general')
   const [loading, setLoading] = useState(false)
   const [uploadingImage, setUploadingImage] = useState(false)
   const imageInputRef = useRef<HTMLInputElement>(null)
@@ -126,16 +128,36 @@ export function ProductForm({ store, categories, product }: Props) {
     setLoading(false)
   }
 
-  return (
-    <Tabs defaultValue="general">
-      <TabsList className="w-full grid grid-cols-3">
-        <TabsTrigger value="general">General</TabsTrigger>
-        <TabsTrigger value="imagenes">Imágenes</TabsTrigger>
-        <TabsTrigger value="inventario">Inventario</TabsTrigger>
-      </TabsList>
+  const TABS = [
+    { id: 'general' as Tab, label: 'General', icon: LayoutGrid },
+    { id: 'imagenes' as Tab, label: 'Imágenes', icon: Image },
+    { id: 'inventario' as Tab, label: 'Inventario', icon: Package },
+  ]
 
-      <TabsContent value="general" className="mt-4 space-y-4">
-        <Card>
+  return (
+    <div className="space-y-4">
+      {/* Tab bar */}
+      <div className="flex rounded-xl bg-indigo-50 p-1 gap-1">
+        {TABS.map(({ id, label, icon: Icon }) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => setActiveTab(id)}
+            className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold transition-all ${
+              activeTab === id
+                ? 'bg-indigo-600 text-white shadow'
+                : 'text-indigo-500 hover:bg-indigo-100'
+            }`}
+          >
+            <Icon className="h-4 w-4" />
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* General */}
+      {activeTab === 'general' && (
+        <Card className="border-indigo-100 shadow-sm">
           <CardContent className="pt-6 space-y-4">
             <div className="space-y-1">
               <Label>Nombre *</Label>
@@ -193,7 +215,7 @@ export function ProductForm({ store, categories, product }: Props) {
               <Label>Tags (separados por coma)</Label>
               <Input value={form.tags} onChange={(e) => updateForm('tags', e.target.value)} placeholder="apple, iphone, smartphone" />
             </div>
-            <div className="flex gap-6">
+            <div className="flex gap-6 pt-1">
               <div className="flex items-center gap-2">
                 <Switch checked={form.is_active} onCheckedChange={(v) => updateForm('is_active', v)} />
                 <Label>Activo</Label>
@@ -205,79 +227,52 @@ export function ProductForm({ store, categories, product }: Props) {
             </div>
           </CardContent>
         </Card>
-      </TabsContent>
+      )}
 
-      <TabsContent value="imagenes" className="mt-4">
-        <Card>
-          <CardHeader><CardTitle className="text-base">Imágenes del producto</CardTitle></CardHeader>
-          <CardContent className="space-y-3">
-            {/* Upload directo */}
-            <div className="flex items-center gap-3 rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4">
-              <Upload className="h-5 w-5 text-gray-400 flex-shrink-0" />
+      {/* Imágenes */}
+      {activeTab === 'imagenes' && (
+        <Card className="border-indigo-100 shadow-sm">
+          <CardHeader><CardTitle className="text-base text-indigo-700">Imágenes del producto</CardTitle></CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-3 rounded-lg border-2 border-dashed border-indigo-200 bg-indigo-50 p-4">
+              <Upload className="h-5 w-5 text-indigo-400 flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-700">Subir imágenes desde tu computadora</p>
-                <p className="text-xs text-gray-400">JPG, PNG, WebP — puedes seleccionar varias a la vez</p>
+                <p className="text-sm font-medium text-gray-700">Subir desde tu computadora</p>
+                <p className="text-xs text-gray-400">JPG, PNG, WebP — varias a la vez</p>
               </div>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                disabled={uploadingImage}
-                onClick={() => imageInputRef.current?.click()}
-              >
+              <Button type="button" size="sm" variant="outline" disabled={uploadingImage} onClick={() => imageInputRef.current?.click()} className="border-indigo-300 text-indigo-600 hover:bg-indigo-100">
                 {uploadingImage ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Seleccionar'}
               </Button>
-              <input
-                ref={imageInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                className="hidden"
-                onChange={handleImageUpload}
-              />
+              <input ref={imageInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleImageUpload} />
             </div>
 
-            {/* URLs manual */}
-            <div>
-              <Label className="mb-1 block text-sm text-gray-600">O pega URLs directamente (una por línea)</Label>
-              <Textarea
-                value={form.images_text}
-                onChange={(e) => updateForm('images_text', e.target.value)}
-                rows={5}
-                placeholder="https://ejemplo.com/imagen1.jpg&#10;https://ejemplo.com/imagen2.jpg"
-              />
+            <div className="space-y-1">
+              <Label className="text-gray-600">O pega URLs (una por línea)</Label>
+              <Textarea value={form.images_text} onChange={(e) => updateForm('images_text', e.target.value)} rows={4} placeholder="https://ejemplo.com/imagen1.jpg&#10;https://ejemplo.com/imagen2.jpg" />
             </div>
 
-            {/* Preview */}
             {form.images_text.trim() && (
               <div className="flex flex-wrap gap-2">
                 {form.images_text.split('\n').filter(u => u.trim().startsWith('http')).map((url, i) => (
                   <div key={i} className="relative group">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={url.trim()} alt={`imagen ${i + 1}`} className="h-20 w-20 rounded-lg object-cover border" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
+                    <img src={url.trim()} alt={`imagen ${i + 1}`} className="h-20 w-20 rounded-lg object-cover border-2 border-indigo-100" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
                     {i === 0 && <span className="absolute bottom-1 left-1 rounded bg-indigo-600 px-1 text-[10px] text-white">Principal</span>}
-                    <button
-                      type="button"
-                      className="absolute -right-1 -top-1 hidden group-hover:flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white"
-                      onClick={() => {
-                        const lines = form.images_text.split('\n').filter((_, idx) => idx !== i)
-                        updateForm('images_text', lines.join('\n'))
-                      }}
-                    >
+                    <button type="button" className="absolute -right-1 -top-1 hidden group-hover:flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white" onClick={() => { const lines = form.images_text.split('\n').filter((_, idx) => idx !== i); updateForm('images_text', lines.join('\n')) }}>
                       <X className="h-3 w-3" />
                     </button>
                   </div>
                 ))}
               </div>
             )}
-
-            <p className="text-xs text-gray-400">La primera imagen será la principal. Requiere bucket <code className="bg-gray-100 px-1 rounded">products</code> público en Supabase Storage.</p>
+            <p className="text-xs text-gray-400">La primera imagen será la principal. Puedes agregar imágenes después desde editar producto.</p>
           </CardContent>
         </Card>
-      </TabsContent>
+      )}
 
-      <TabsContent value="inventario" className="mt-4">
-        <Card>
+      {/* Inventario */}
+      {activeTab === 'inventario' && (
+        <Card className="border-indigo-100 shadow-sm">
           <CardContent className="pt-6 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
@@ -300,13 +295,16 @@ export function ProductForm({ store, categories, product }: Props) {
             </div>
           </CardContent>
         </Card>
-      </TabsContent>
+      )}
 
-      <div className="flex justify-center mt-6">
-        <Button onClick={handleSave} disabled={loading} className="px-10 bg-indigo-600 hover:bg-indigo-700">
-          {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Guardando...</> : <><Save className="mr-2 h-4 w-4" />{product ? 'Guardar cambios' : 'Crear producto'}</>}
+      {/* Botón guardar */}
+      <div className="flex justify-center pt-2 pb-6">
+        <Button onClick={handleSave} disabled={loading} className="px-12 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-base font-semibold shadow-md">
+          {loading
+            ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Guardando...</>
+            : <><Save className="mr-2 h-4 w-4" />{product ? 'Guardar cambios' : 'Crear producto'}</>}
         </Button>
       </div>
-    </Tabs>
+    </div>
   )
 }
