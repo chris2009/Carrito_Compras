@@ -247,6 +247,8 @@ Cada variable de entorno conecta ShopFlow con un servicio externo o configura su
 
 ### 1. Super Admin — Dueño de la plataforma
 - Ve y gestiona **todas** las tiendas desde `/superadmin`
+- Panel con métricas globales (MRR, revenue, productos), gráficas Recharts y tabla de tiendas
+- Soporta light/dark mode con ThemeToggle igual que el resto de la app
 - Accede con `SUPERADMIN_EMAIL` configurado en las variables de entorno
 - Usa `SUPABASE_SERVICE_ROLE_KEY` para ver datos sin restricciones RLS
 
@@ -326,7 +328,9 @@ ShopFlow/
 │   │       └── configuracion/    # Nombre, tema, contacto de la tienda
 │   │
 │   ├── (superadmin)/             # Panel maestro (solo SUPERADMIN_EMAIL)
-│   │   └── superadmin/page.tsx   # Lista de todas las tiendas
+│   │   └── superadmin/
+│   │       ├── page.tsx          # Métricas globales, gráficas y tabla de tiendas
+│   │       └── StoreCharts.tsx   # Gráficas Recharts (productos por tienda, planes)
 │   │
 │   ├── api/
 │   │   ├── checkout/route.ts         # POST → crea Stripe Checkout Session

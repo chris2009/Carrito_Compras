@@ -88,6 +88,9 @@ CREATE POLICY "public_read_products" ON storage.objects FOR SELECT TO public
 USING (bucket_id = 'products');
 ```
 
+## Mejoras UI post-fases
+- **Superadmin panel** (2026-05-08): rediseño completo — light/dark mode vía ThemeProvider (quitadas clases hardcoded `bg-gray-950`), ThemeToggle en header, StickyFooter agregado, contenido centrado con `max-w-7xl mx-auto`, tarjetas de métricas con iconos Lucide + barra de acento, dos gráficas Recharts (barras: productos por tienda; donut: distribución de planes) en componente cliente `StoreCharts.tsx`, tabla re-estilizada con clases semánticas (`border-border`, `text-muted-foreground`, `hover:bg-muted/50`)
+
 ## Decisiones de arquitectura importantes
 - Navegación post-auth siempre con `window.location.href` (nunca `router.push`) para garantizar que las cookies de sesión de Supabase lleguen al servidor
 - Onboarding crea tienda con `supabase.auth.getUser()` del cliente — si hay race condition de sesión, se asigna al usuario incorrecto. Resuelto con full page reload antes del onboarding

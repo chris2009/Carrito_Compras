@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { ThemeToggle } from '@/components/ThemeToggle'
+import { StickyFooter } from '@/components/StickyFooter'
 
 export default async function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -10,17 +12,23 @@ export default async function SuperAdminLayout({ children }: { children: React.R
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      <header className="border-b border-gray-800 px-6 py-3">
-        <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/95 px-6 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded bg-indigo-600 text-xs font-bold">SA</div>
+            <div className="flex h-8 w-8 items-center justify-center rounded bg-indigo-600 text-xs font-bold text-white">
+              SA
+            </div>
             <span className="font-semibold">ShopFlow SuperAdmin</span>
           </div>
-          <span className="text-sm text-gray-400">{user.email}</span>
+          <div className="flex items-center gap-3">
+            <span className="hidden text-sm text-muted-foreground sm:block">{user.email}</span>
+            <ThemeToggle />
+          </div>
         </div>
       </header>
-      <main className="p-6">{children}</main>
+      <main className="mx-auto max-w-7xl p-6 pb-16">{children}</main>
+      <StickyFooter className="hidden md:flex" />
     </div>
   )
 }
